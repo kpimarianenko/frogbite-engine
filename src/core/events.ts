@@ -13,7 +13,17 @@ export class EventBus {
   }
 
   unsubscribe(eventName: string, cb: EventCallback) {
-    this.eventMap.get(eventName)?.delete(cb);
+    const subscribers = this.eventMap.get(eventName);
+
+    if (!subscribers) {
+      return;
+    }
+
+    subscribers.delete(cb);
+
+    if (!subscribers.size) {
+      this.eventMap.delete(eventName);
+    }
   }
 
   emit<T = unknown>(event: string, payload?: T) {

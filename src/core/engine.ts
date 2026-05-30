@@ -1,4 +1,5 @@
 import { MILLIS_IN_SECOND } from '@/constants/time';
+import type { Renderer } from '@/render/renderer';
 import { Time } from './time';
 import { EventBus } from './events';
 
@@ -11,6 +12,11 @@ export class Engine {
 
   time = new Time();
   events = new EventBus();
+  renderer: Renderer;
+
+  constructor(renderer: Renderer) {
+    this.renderer = renderer;
+  }
 
   start() {
     requestAnimationFrame(this.loop);
@@ -44,6 +50,6 @@ export class Engine {
   }
 
   render() {
-    // TODO
+    this.renderer.render();
   }
 }
