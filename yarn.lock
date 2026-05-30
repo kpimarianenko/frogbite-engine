@@ -103,7 +103,7 @@
   resolved "https://registry.yarnpkg.com/@eslint-community/regexpp/-/regexpp-4.12.2.tgz#bccdf615bcf7b6e8db830ec0b8d21c9a25de597b"
   integrity sha512-EriSTlt5OC9/7SXkRSCAhfSxxoSUgBm33OH+IkwbdpgoqsSsUg7y3uh+IICI/Qg4BBWr3U2i39RpmycbxMq4ew==
 
-"@eslint/compat@^2.1.0":
+"@eslint/compat@2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@eslint/compat/-/compat-2.1.0.tgz#8c66110f95cf0fdd864b76ae4d534042dea7bb7f"
   integrity sha512-LgaSCymEpw7tF53xvDw9SNsraPb1IBHxpdABIOM0hW8UAlP8znrjYtuxfR58FSJ3L9BhwD+FaPRFQpZq84Nh6g==
@@ -133,7 +133,7 @@
   dependencies:
     "@types/json-schema" "^7.0.15"
 
-"@eslint/eslintrc@^3.3.5":
+"@eslint/eslintrc@3.3.5":
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-3.3.5.tgz#c131793cfc1a7b96f24a83e0a8bbd4b881558c60"
   integrity sha512-4IlJx0X0qftVsN5E+/vGujTRIFtwuLbNsVUe7TO6zYPDR1O6nFwvwhIKEKSrl6dZchmYBITazxKoUYOjdtjlRg==
@@ -705,7 +705,7 @@ eslint-config-prettier@10.1.8:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-10.1.8.tgz#15734ce4af8c2778cc32f0b01b37b0b5cd1ecb97"
   integrity sha512-82GZUjRS0p/jganf6q1rEO25VSoHH0hKPCTrgillPjdI/3bgBhAE1QzHrHTizjpRvy6pGAvKjDJtk2pF9NDq8w==
 
-eslint-plugin-eslint-comments@^3.2.0:
+eslint-plugin-eslint-comments@3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-eslint-comments/-/eslint-plugin-eslint-comments-3.2.0.tgz#9e1cd7b4413526abb313933071d7aba05ca12ffa"
   integrity sha512-0jkOl0hfojIHHmEHgmNdqv4fmh7300NdpA9FFpF7zaoLvB/QeXOGNLIo86oAveJFrfB1p05kC8hpEMHM8DwWVQ==
@@ -1252,7 +1252,7 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
-lint-staged@^17.0.6:
+lint-staged@17.0.6:
   version "17.0.6"
   resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-17.0.6.tgz#f3ae5d7518a179e8fe93e92564205ac27255d52c"
   integrity sha512-xTowloQX5tfs9TC6SUHnKuBSx/TUx+9w39zRTbVrB70DxUJZh3OZWnOa0LbejxVX9adYuioGJoP4dpQ04QHehg==
@@ -1672,14 +1672,14 @@ stylelint-config-recommended@^18.0.0:
   resolved "https://registry.yarnpkg.com/stylelint-config-recommended/-/stylelint-config-recommended-18.0.0.tgz#1d86be73565c3cd5e6babb8abcc932012a86bd76"
   integrity sha512-mxgT2XY6YZ3HWWe3Di8umG6aBmWmHTblTgu/f10rqFXnyWxjKWwNdjSWkgkwCtxIKnqjSJzvFmPT5yabVIRxZg==
 
-stylelint-config-standard@true40.0.0:
+stylelint-config-standard@40.0.0:
   version "40.0.0"
   resolved "https://registry.yarnpkg.com/stylelint-config-standard/-/stylelint-config-standard-40.0.0.tgz#6bb72b94f8be434cdf2902ba26b2167d572c5414"
   integrity sha512-EznGJxOUhtWck2r6dJpbgAdPATIzvpLdK9+i5qPd4Lx70es66TkBPljSg4wN3Qnc6c4h2n+WbUrUynQ3fanjHw==
   dependencies:
     stylelint-config-recommended "^18.0.0"
 
-stylelint@^17.12.0:
+stylelint@17.12.0:
   version "17.12.0"
   resolved "https://registry.yarnpkg.com/stylelint/-/stylelint-17.12.0.tgz#388d3fb56bebbb816f1043c8cc1c290bf5a889ab"
   integrity sha512-KIlzWXMHUvgfPUR0R7TK3H80yCIi0uoivUwf+6Az4yrHJD1Q3c1qIkh/H5Z0i/K3QXgtq/UMEkWyBUSUwnpnOg==
