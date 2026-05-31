@@ -1,12 +1,12 @@
 import { MILLIS_IN_SECOND } from '@/constants/time';
 import type { Renderer } from '@/render/renderer';
 import { RenderPipeline } from '@/render/render-pipeline';
-import type { Scene } from '@/scene/scene';
-import type { View } from '@/scene/view';
 import type { InputManager } from './input';
 import type { System } from './system';
 import { Time } from './time';
 import { EventBus } from './events';
+import type { Scene } from '@/scene/scene';
+import { Camera } from '@/scene/camera';
 
 export class Engine {
   private lastTime = 0;
@@ -19,7 +19,7 @@ export class Engine {
   events = new EventBus();
   renderPipeline = new RenderPipeline();
   renderer: Renderer;
-  views: View[] = [];
+  views: { [sceneId: string]: Camera[] } = {};
   scenes: Scene[] = [];
   input: InputManager;
   systems: System[] = [];
@@ -55,6 +55,7 @@ export class Engine {
       for (const scene of this.scenes) {
         system.update({
           scene,
+          cameras: this.views[scene.id],
           input: this.input,
           dt,
         });
@@ -69,6 +70,7 @@ export class Engine {
       for (const scene of this.scenes) {
         system.tick?.({
           scene,
+          cameras: this.views[scene.id],
           input: this.input,
           dt,
         });
@@ -77,12 +79,23 @@ export class Engine {
   }
 
   render() {
-    for (const view of this.views) {
-      this.renderer.render(this.renderPipeline.build(view.scene, view.camera));
+    for (const scene of this.scenes) {
+      for (const camera of this.views[scene.id]) {
+        this.renderer.render(this.renderPipeline.build(scene, camera));
+      }
     }
   }
 
   addSystem(system: System) {
     this.systems.push(system);
+  }
+
+  addView(scene: Scene, camera: Camera) {
+    if (this.views[scene.id]) {
+      this.views[scene.id].push(camera);
+    } else {
+      this.views[scene.id] = [camera];
+      this.scenes.push(scene);
+    }
   }
 }

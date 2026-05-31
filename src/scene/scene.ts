@@ -1,7 +1,12 @@
 import type { Entity } from './entity';
 
 export class Scene {
+  readonly id: string;
   entities: Entity[] = [];
+
+  constructor(sceneId: string) {
+    this.id = sceneId;
+  }
 
   add(entity: Entity) {
     this.entities.push(entity);
