@@ -68,6 +68,7 @@ export default tseslint.config(
       ],
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unused-private-class-members': 'error',
+      '@typescript-eslint/no-unsafe-enum-comparison': 'off',
       'no-unused-private-class-members': 'off',
       'arrow-body-style': ['error', 'as-needed'],
       'func-style': [

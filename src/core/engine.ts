@@ -1,6 +1,8 @@
 import { MILLIS_IN_SECOND } from '@/constants/time';
 import type { Renderer } from '@/render/renderer';
 import type { Scene } from '@/scene/scene';
+import type { InputManager } from './input';
+import type { System } from './system';
 import { Time } from './time';
 import { EventBus } from './events';
 
@@ -15,11 +17,14 @@ export class Engine {
   events = new EventBus();
   renderer: Renderer;
   scene: Scene;
+  input: InputManager;
+  systems: System[] = [];
 
-  constructor(renderer: Renderer, initialScene: Scene) {
+  constructor(renderer: Renderer, initialScene: Scene, input: InputManager) {
     this.renderer = renderer;
     this.scene = initialScene;
     this.scene.onEnter?.();
+    this.input = input;
   }
 
   start() {
@@ -43,14 +48,16 @@ export class Engine {
     requestAnimationFrame(this.loop);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(dt: number) {
-    // TODO
+    for (const system of this.systems) {
+      system.update(this.scene, dt, this.input);
+    }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   tick(dt: number) {
-    // TODO
+    for (const system of this.systems) {
+      system.tick?.(this.scene, dt, this.input);
+    }
   }
 
   render() {
@@ -61,5 +68,9 @@ export class Engine {
     this.scene.onExit?.();
     this.scene = scene;
     this.scene.onEnter?.();
+  }
+
+  addSystem(system: System) {
+    this.systems.push(system);
   }
 }
