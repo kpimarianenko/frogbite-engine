@@ -2,6 +2,7 @@ import type { Scene } from '@/scene/scene';
 import type { Entity } from '@/scene/entity';
 import type { SpriteRenderData } from '@/scene/sprite-render-data';
 import type { MeshRenderData } from '@/scene/mesh-render-data';
+import type { Vector2D, Vector3D } from '@/math/vector';
 import type { Renderer } from './renderer';
 
 export class CanvasRenderer implements Renderer {
@@ -25,11 +26,13 @@ export class CanvasRenderer implements Renderer {
         continue;
       }
 
-      this.drawEntity(entity);
+      const position = scene.camera.project(entity.transform.position);
+
+      this.drawEntity(entity, position);
     }
   }
 
-  drawEntity(entity: Entity) {
+  drawEntity(entity: Entity, position: Vector3D) {
     const renderable = entity.render;
 
     if (!renderable) {
@@ -38,26 +41,24 @@ export class CanvasRenderer implements Renderer {
 
     switch (renderable.type) {
       case 'sprite': {
-        this.drawSprite(entity, renderable);
+        this.drawSprite(renderable, position);
         break;
       }
       case 'mesh': {
-        this.drawMesh(entity, renderable);
+        this.drawMesh(renderable, position);
         break;
       }
     }
   }
 
   // TODO: Implement rotation, scale logic. Implement textures loading
-  private drawSprite(entity: Entity, sprite: SpriteRenderData) {
-    const { x, y } = entity.transform.position;
-
+  private drawSprite(sprite: SpriteRenderData, pos: Vector2D) {
     this.ctx.fillStyle = sprite.color;
-    this.ctx.fillRect(x, y, sprite.width, sprite.height);
+    this.ctx.fillRect(pos.x, pos.y, sprite.width, sprite.height);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  drawMesh(entity: Entity, mesh: MeshRenderData) {
+  drawMesh(mesh: MeshRenderData, pos: Vector3D) {
     // TODO: Implement 3D logic
   }
 

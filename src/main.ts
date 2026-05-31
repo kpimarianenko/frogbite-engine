@@ -7,11 +7,15 @@ import { Entity } from './scene/entity';
 import { SpriteRenderData } from './scene/sprite-render-data';
 import { InputManager } from './core/input';
 import type { System } from './core/system';
+import { Camera } from './scene/camera';
 
 class MovementSystem implements System {
-  private v = 100;
+  private v = 500;
+  private cv = 20;
 
   update(scene: Scene, dt: number, input: InputManager): void {
+    scene.camera.transform.position.x += this.cv * dt;
+
     for (const entity of scene.entities) {
       if (input.isDown('KeyW')) {
         entity.transform.position.y -= this.v * dt;
@@ -35,7 +39,7 @@ class MovementSystem implements System {
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const input = new InputManager();
 const renderer = new CanvasRenderer(canvas);
-const scene = new Scene();
+const scene = new Scene(new Camera());
 
 scene.add(new Entity(new SpriteRenderData()));
 
