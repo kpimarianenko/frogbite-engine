@@ -1,13 +1,7 @@
-import { Vector3D } from '@/math/vector';
+import type { Vector3D } from '@/math/vector';
 
-export class Transform {
-  position;
-  rotation;
-  scale;
-
-  constructor(position = new Vector3D(), rotation = new Vector3D(), scale = new Vector3D(1, 1, 1)) {
-    this.position = position;
-    this.rotation = rotation;
-    this.scale = scale;
-  }
-}
+export type Transform = {
+  position: Vector3D;
+  rotation: Vector3D;
+  scale: Vector3D;
+};

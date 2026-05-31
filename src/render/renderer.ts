@@ -1,7 +1,7 @@
-import type { Scene } from '@/scene/scene';
+import type { RenderCommand } from './render-command';
 
 export interface Renderer {
   clear(): void;
-  render(scene: Scene): void;
+  render(commands: RenderCommand[]): void;
   resize(w: number, h: number): void;
 }

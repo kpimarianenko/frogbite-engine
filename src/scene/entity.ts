@@ -1,8 +1,12 @@
 import type { Renderable } from './renderable';
-import { Transform } from './transform';
 
 export class Entity {
-  transform = new Transform();
+  transform = {
+    position: { x: 0, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0, y: 0, z: 0 },
+  };
+
   render: Renderable | null = null;
   visible = true;
 

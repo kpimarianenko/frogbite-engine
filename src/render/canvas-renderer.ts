@@ -1,7 +1,6 @@
-import type { Scene } from '@/scene/scene';
+import { half } from '@/math/helpers';
 import type { Renderer } from './renderer';
 import type { MeshRenderCommand, RenderCommand, SpriteRenderCommand } from './render-command';
-import { half } from '@/math/helpers';
 
 export class CanvasRenderer implements Renderer {
   private canvas: HTMLCanvasElement;
@@ -16,15 +15,12 @@ export class CanvasRenderer implements Renderer {
     this.ctx = this.canvas.getContext('2d')!;
   }
 
-  render(scene: Scene): void {
+  render(commands: RenderCommand[]): void {
     this.clear();
-
-    const renderCommands = scene.buildRenderQueue();
-
-    this.execute(renderCommands);
+    this.execute(commands);
   }
 
-  execute(commands: RenderCommand[]) {
+  private execute(commands: RenderCommand[]) {
     for (const command of commands) {
       switch (command.type) {
         case 'sprite': {

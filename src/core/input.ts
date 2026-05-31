@@ -1,4 +1,4 @@
-import { Vector2D } from '@/math/vector';
+import type { Vector2D } from '@/math/vector';
 
 enum NativeMouseButton {
   Left = 0,
@@ -10,8 +10,8 @@ export class InputManager {
   private keys = new Set<string>();
   private pressed = new Set<string>();
   private released = new Set<string>();
-  private mousePos = new Vector2D();
-  private mouseDelta = new Vector2D();
+  private mousePos: Vector2D = { x: 0, y: 0 };
+  private mouseDelta: Vector2D = { x: 0, y: 0 };
   private wheelDelta = 0;
 
   constructor() {

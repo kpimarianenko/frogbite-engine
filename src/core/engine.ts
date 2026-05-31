@@ -1,5 +1,6 @@
 import { MILLIS_IN_SECOND } from '@/constants/time';
 import type { Renderer } from '@/render/renderer';
+import { RenderPipeline } from '@/render/render-pipeline';
 import type { Scene } from '@/scene/scene';
 import type { InputManager } from './input';
 import type { System } from './system';
@@ -15,6 +16,7 @@ export class Engine {
 
   time = new Time();
   events = new EventBus();
+  renderPipeline = new RenderPipeline();
   renderer: Renderer;
   scene: Scene;
   input: InputManager;
@@ -63,7 +65,7 @@ export class Engine {
   }
 
   render() {
-    this.renderer.render(this.scene);
+    this.renderer.render(this.renderPipeline.build(this.scene));
   }
 
   setScene(scene: Scene) {
