@@ -1,9 +1,6 @@
 import type { Scene } from '@/scene/scene';
-import type { Entity } from '@/scene/entity';
-import type { SpriteRenderData } from '@/scene/sprite-render-data';
-import type { MeshRenderData } from '@/scene/mesh-render-data';
-import type { Vector2D, Vector3D } from '@/math/vector';
 import type { Renderer } from './renderer';
+import type { MeshRenderCommand, RenderCommand, SpriteRenderCommand } from './render-command';
 
 export class CanvasRenderer implements Renderer {
   private canvas: HTMLCanvasElement;
@@ -21,44 +18,34 @@ export class CanvasRenderer implements Renderer {
   render(scene: Scene): void {
     this.clear();
 
-    for (const entity of scene.entities) {
-      if (!entity.render || !entity.visible) {
-        continue;
-      }
+    const renderCommands = scene.buildRenderQueue();
 
-      const position = scene.camera.project(entity.transform.position);
-
-      this.drawEntity(entity, position);
-    }
+    this.execute(renderCommands);
   }
 
-  drawEntity(entity: Entity, position: Vector3D) {
-    const renderable = entity.render;
-
-    if (!renderable) {
-      return;
-    }
-
-    switch (renderable.type) {
-      case 'sprite': {
-        this.drawSprite(renderable, position);
-        break;
-      }
-      case 'mesh': {
-        this.drawMesh(renderable, position);
-        break;
+  execute(commands: RenderCommand[]) {
+    for (const command of commands) {
+      switch (command.type) {
+        case 'sprite': {
+          this.drawSprite(command);
+          break;
+        }
+        case 'mesh': {
+          this.drawMesh(command);
+          break;
+        }
       }
     }
   }
 
   // TODO: Implement rotation, scale logic. Implement textures loading
-  private drawSprite(sprite: SpriteRenderData, pos: Vector2D) {
-    this.ctx.fillStyle = sprite.color;
-    this.ctx.fillRect(pos.x, pos.y, sprite.width, sprite.height);
+  private drawSprite(command: SpriteRenderCommand) {
+    this.ctx.fillStyle = command.color;
+    this.ctx.fillRect(command.x, command.y, command.width, command.height);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  drawMesh(mesh: MeshRenderData, pos: Vector3D) {
+  drawMesh(command: MeshRenderCommand) {
     // TODO: Implement 3D logic
   }
 

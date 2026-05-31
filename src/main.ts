@@ -4,7 +4,7 @@ import { CanvasRenderer } from './render/canvas-renderer';
 import { handleRendererResize } from './render/utils';
 import { Scene } from './scene/scene';
 import { Entity } from './scene/entity';
-import { SpriteRenderData } from './scene/sprite-render-data';
+import { SpriteRenderData } from './scene/renderable';
 import { InputManager } from './core/input';
 import type { System } from './core/system';
 import { Camera } from './scene/camera';
