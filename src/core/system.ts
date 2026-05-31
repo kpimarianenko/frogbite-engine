@@ -1,7 +1,13 @@
 import type { Scene } from '@/scene/scene';
 import type { InputManager } from './input';
 
+export type SystemContext = {
+  scene: Scene;
+  input: InputManager;
+  dt: number;
+};
+
 export interface System {
-  update(scene: Scene, dt: number, input: InputManager): void;
-  tick?(scene: Scene, dt: number, input: InputManager): void;
+  update(context: SystemContext): void;
+  tick?(context: SystemContext): void;
 }

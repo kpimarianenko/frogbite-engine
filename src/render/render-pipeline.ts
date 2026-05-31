@@ -1,13 +1,14 @@
 import type { Scene } from '@/scene/scene';
 import type { RenderCommand } from './render-command';
+import type { Camera } from '@/scene/camera';
 
 export class RenderPipeline {
-  build(scene: Scene) {
+  build(scene: Scene, camera: Camera) {
     const entities = scene.query(e => !!e.render && e.visible);
 
     return entities.map<RenderCommand>(entity => {
       const { transform } = entity;
-      const projectedPosition = scene.camera.project(transform.position);
+      const projectedPosition = camera.project(transform.position);
       const renderData = entity.render!;
       const renderTransform = {
         position: projectedPosition,

@@ -6,16 +6,16 @@ import { Scene } from './scene/scene';
 import { Entity } from './scene/entity';
 import { SpriteRenderData } from './scene/renderable';
 import { InputManager } from './core/input';
-import type { System } from './core/system';
-import { Camera } from './scene/camera';
+import type { System, SystemContext } from './core/system';
+// import { Camera } from './scene/camera';
 import { half } from './math/helpers';
 
 class MovementSystem implements System {
   private v = 500;
-  private cv = 5;
+  // private cv = 5;
 
-  update(scene: Scene, dt: number, input: InputManager): void {
-    scene.camera.transform.position.x += this.cv * dt;
+  update({ scene, input, dt }: SystemContext): void {
+    // camera.transform.position.x += this.cv * dt;
 
     for (const entity of scene.entities) {
       if (input.isDown('KeyW')) {
@@ -40,7 +40,7 @@ class MovementSystem implements System {
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const input = new InputManager();
 const renderer = new CanvasRenderer(canvas);
-const scene = new Scene(new Camera());
+const scene = new Scene();
 
 const entity = new Entity(new SpriteRenderData());
 
@@ -57,7 +57,7 @@ handleRendererResize(renderer, () => ({
   height: window.innerHeight,
 }));
 
-const engine = new Engine(renderer, scene, input);
+const engine = new Engine(renderer, input);
 
 engine.addSystem(new MovementSystem());
 engine.start();

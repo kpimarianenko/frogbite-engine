@@ -2,6 +2,7 @@ import { MILLIS_IN_SECOND } from '@/constants/time';
 import type { Renderer } from '@/render/renderer';
 import { RenderPipeline } from '@/render/render-pipeline';
 import type { Scene } from '@/scene/scene';
+import type { View } from '@/scene/view';
 import type { InputManager } from './input';
 import type { System } from './system';
 import { Time } from './time';
@@ -18,14 +19,13 @@ export class Engine {
   events = new EventBus();
   renderPipeline = new RenderPipeline();
   renderer: Renderer;
-  scene: Scene;
+  views: View[] = [];
+  scenes: Scene[] = [];
   input: InputManager;
   systems: System[] = [];
 
-  constructor(renderer: Renderer, initialScene: Scene, input: InputManager) {
+  constructor(renderer: Renderer, input: InputManager) {
     this.renderer = renderer;
-    this.scene = initialScene;
-    this.scene.onEnter?.();
     this.input = input;
   }
 
@@ -52,7 +52,13 @@ export class Engine {
 
   update(dt: number) {
     for (const system of this.systems) {
-      system.update(this.scene, dt, this.input);
+      for (const scene of this.scenes) {
+        system.update({
+          scene,
+          input: this.input,
+          dt,
+        });
+      }
     }
 
     this.input.update();
@@ -60,18 +66,20 @@ export class Engine {
 
   tick(dt: number) {
     for (const system of this.systems) {
-      system.tick?.(this.scene, dt, this.input);
+      for (const scene of this.scenes) {
+        system.tick?.({
+          scene,
+          input: this.input,
+          dt,
+        });
+      }
     }
   }
 
   render() {
-    this.renderer.render(this.renderPipeline.build(this.scene));
-  }
-
-  setScene(scene: Scene) {
-    this.scene.onExit?.();
-    this.scene = scene;
-    this.scene.onEnter?.();
+    for (const view of this.views) {
+      this.renderer.render(this.renderPipeline.build(view.scene, view.camera));
+    }
   }
 
   addSystem(system: System) {
