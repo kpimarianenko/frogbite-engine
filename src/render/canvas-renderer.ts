@@ -1,6 +1,7 @@
 import type { Scene } from '@/scene/scene';
 import type { Renderer } from './renderer';
 import type { MeshRenderCommand, RenderCommand, SpriteRenderCommand } from './render-command';
+import { half } from '@/math/helpers';
 
 export class CanvasRenderer implements Renderer {
   private canvas: HTMLCanvasElement;
@@ -38,10 +39,19 @@ export class CanvasRenderer implements Renderer {
     }
   }
 
-  // TODO: Implement rotation, scale logic. Implement textures loading
   private drawSprite(command: SpriteRenderCommand) {
+    const { position, rotation, scale } = command.transform;
+
+    this.ctx.save();
+
+    this.ctx.translate(position.x, position.y);
+    this.ctx.rotate(rotation.z);
+    this.ctx.scale(scale.x, scale.y);
+
     this.ctx.fillStyle = command.color;
-    this.ctx.fillRect(command.x, command.y, command.width, command.height);
+    this.ctx.fillRect(-half(command.width), -half(command.height), command.width, command.height);
+
+    this.ctx.restore();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

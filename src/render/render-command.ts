@@ -1,7 +1,8 @@
+import type { Transform } from '@/scene/transform';
+
 export type SpriteRenderCommand = {
   type: 'sprite';
-  x: number;
-  y: number;
+  transform: Transform;
   width: number;
   height: number;
   color: string;
@@ -9,15 +10,7 @@ export type SpriteRenderCommand = {
 
 export type MeshRenderCommand = {
   type: 'mesh';
-  x: number;
-  y: number;
-  z: number;
-  rotationX: number;
-  rotationY: number;
-  rotationZ: number;
-  scaleX: number;
-  scaleY: number;
-  scaleZ: number;
+  transform: Transform;
   vertices: number[];
 };
 

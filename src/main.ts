@@ -8,10 +8,11 @@ import { SpriteRenderData } from './scene/renderable';
 import { InputManager } from './core/input';
 import type { System } from './core/system';
 import { Camera } from './scene/camera';
+import { half } from './math/helpers';
 
 class MovementSystem implements System {
   private v = 500;
-  private cv = 20;
+  private cv = 5;
 
   update(scene: Scene, dt: number, input: InputManager): void {
     scene.camera.transform.position.x += this.cv * dt;
@@ -41,7 +42,15 @@ const input = new InputManager();
 const renderer = new CanvasRenderer(canvas);
 const scene = new Scene(new Camera());
 
-scene.add(new Entity(new SpriteRenderData()));
+const entity = new Entity(new SpriteRenderData());
+
+entity.transform.position.x = 60;
+entity.transform.position.y = 60;
+entity.transform.scale.x = 0.5;
+entity.transform.scale.y = 2;
+entity.transform.rotation.z = half(Math.PI);
+
+scene.add(entity);
 
 handleRendererResize(renderer, () => ({
   width: window.innerWidth,

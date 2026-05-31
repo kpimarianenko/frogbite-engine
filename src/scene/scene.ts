@@ -1,6 +1,7 @@
 import type { RenderCommand } from '@/render/render-command';
 import type { Camera } from './camera';
 import type { Entity } from './entity';
+import { Transform } from './transform';
 
 export class Scene {
   camera: Camera;
@@ -25,13 +26,17 @@ export class Scene {
       }
 
       const projectedPosition = this.camera.project(entity.transform.position);
+      const transform = new Transform(
+        projectedPosition,
+        entity.transform.rotation,
+        entity.transform.scale
+      );
 
       switch (entity.render.type) {
         case 'sprite': {
           acc.push({
             type: 'sprite',
-            x: projectedPosition.x,
-            y: projectedPosition.y,
+            transform,
             width: entity.render.width,
             height: entity.render.height,
             color: entity.render.color,
@@ -41,15 +46,7 @@ export class Scene {
         case 'mesh': {
           acc.push({
             type: 'mesh',
-            x: projectedPosition.x,
-            y: projectedPosition.y,
-            z: projectedPosition.z,
-            rotationX: entity.transform.rotation.x,
-            rotationY: entity.transform.rotation.y,
-            rotationZ: entity.transform.rotation.z,
-            scaleX: entity.transform.scale.x,
-            scaleY: entity.transform.scale.y,
-            scaleZ: entity.transform.scale.z,
+            transform,
             vertices: entity.render.vertices,
           });
           return acc;
