@@ -52,6 +52,8 @@ export class Engine {
     for (const system of this.systems) {
       system.update(this.scene, dt, this.input);
     }
+
+    this.input.update();
   }
 
   tick(dt: number) {

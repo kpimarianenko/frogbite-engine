@@ -6,16 +6,15 @@ enum NativeMouseButton {
 
 export class InputManager {
   private keys = new Set<string>();
-  private mouseButtons = new Set<string>();
+
+  private pressed = new Set<string>();
+  private released = new Set<string>();
 
   constructor() {
-    window.addEventListener('keydown', e => this.keys.add(e.code));
-    window.addEventListener('keyup', e => this.keys.delete(e.code));
-
-    window.addEventListener('mousedown', e => this.mouseButtons.add(this.mapMouseButton(e.button)));
-    window.addEventListener('mouseup', e =>
-      this.mouseButtons.delete(this.mapMouseButton(e.button))
-    );
+    window.addEventListener('keydown', e => this.onKeyPressed(e.code));
+    window.addEventListener('keyup', e => this.onKeyReleased(e.code));
+    window.addEventListener('mousedown', e => this.onKeyPressed(this.mapMouseButton(e.button)));
+    window.addEventListener('mouseup', e => this.onKeyReleased(this.mapMouseButton(e.button)));
   }
 
   private mapMouseButton(button: number) {
@@ -35,7 +34,33 @@ export class InputManager {
     }
   }
 
+  private onKeyPressed(key: string) {
+    if (!this.keys.has(key)) {
+      this.pressed.add(key);
+    }
+
+    this.keys.add(key);
+  }
+
+  private onKeyReleased(key: string) {
+    this.keys.delete(key);
+    this.released.add(key);
+  }
+
   isDown(key: string) {
-    return this.keys.has(key) || this.mouseButtons.has(key);
+    return this.keys.has(key);
+  }
+
+  wasPressed(key: string) {
+    return this.pressed.has(key);
+  }
+
+  wasReleased(key: string) {
+    return this.released.has(key);
+  }
+
+  update() {
+    this.pressed.clear();
+    this.released.clear();
   }
 }
