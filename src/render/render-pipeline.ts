@@ -6,13 +6,13 @@ export class RenderPipeline {
     const entities = scene.query(e => !!e.render && e.visible);
 
     return entities.map<RenderCommand>(entity => {
-      const { transform } = entity;
-      const projectedPosition = camera.project(transform.position);
+      const { worldTransform } = entity;
+      const projectedPosition = camera.project(worldTransform.position);
       const render = entity.render!;
       const renderTransform = {
         position: projectedPosition,
-        rotation: transform.rotation,
-        scale: transform.scale,
+        rotation: worldTransform.rotation,
+        scale: worldTransform.scale,
       };
 
       switch (render.type) {

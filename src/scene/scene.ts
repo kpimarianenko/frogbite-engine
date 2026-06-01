@@ -27,6 +27,10 @@ export class Scene {
     // TODO: Camera removal logic. Add UUID maybe?
   }
 
+  getRootEntities() {
+    return this.query(entity => !entity.parent);
+  }
+
   query(predicate: (entity: Entity) => boolean) {
     return this.entities.filter(predicate);
   }

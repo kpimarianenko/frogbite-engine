@@ -59,6 +59,10 @@ export class Engine {
     this.renderer.clear();
 
     for (const scene of this.scenes) {
+      for (const root of scene.getRootEntities()) {
+        root.updateWorldTransform();
+      }
+
       for (const camera of scene.cameras) {
         this.renderer.render(this.renderPipeline.build(scene, camera));
       }
