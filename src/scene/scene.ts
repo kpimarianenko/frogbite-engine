@@ -7,6 +7,12 @@ export class Scene {
   cameras: Camera[] = [];
   systems: System[] = [];
 
+  update() {
+    for (const root of this.getRootEntities()) {
+      root.updateWorldTransform();
+    }
+  }
+
   addEntity(entity: Entity) {
     this.entities.push(entity);
   }
