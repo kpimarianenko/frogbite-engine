@@ -75,6 +75,13 @@ const entityB = new Entity(new SpriteComponent({ color: 'blue' }));
 entityB.transform.position.x = 60;
 entityB.transform.position.y = 60;
 
+const entityBChild = new Entity(new SpriteComponent({ width: 20, height: 20, color: 'red' }));
+
+entityBChild.transform.position.x = 20;
+entityBChild.transform.position.y = 20;
+
+entityB.addChild(entityBChild);
+
 sceneB.addEntity(entityB);
 sceneB.addSystem(new MovementSystem());
 

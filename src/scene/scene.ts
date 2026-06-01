@@ -37,8 +37,23 @@ export class Scene {
     return this.query(entity => !entity.parent);
   }
 
-  query(predicate: (entity: Entity) => boolean) {
-    return this.entities.filter(predicate);
+  query(predicate: (entity: Entity) => boolean): Entity[] {
+    const result: Entity[] = [];
+    const stack: Entity[] = [...this.entities];
+
+    while (stack.length > 0) {
+      const entity = stack.pop()!;
+
+      if (predicate(entity)) {
+        result.push(entity);
+      }
+
+      if (entity.children?.length) {
+        stack.push(...entity.children);
+      }
+    }
+
+    return result;
   }
 
   onEnter?(): void;
