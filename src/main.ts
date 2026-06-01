@@ -14,8 +14,8 @@ class MovementSystem implements System {
   private v = 500;
   private cv = 5;
 
-  update({ scene, cameras, input, dt }: SystemContext): void {
-    for (const camera of cameras) {
+  update({ scene, input, dt }: SystemContext): void {
+    for (const camera of scene.cameras) {
       camera.transform.position.x += this.cv * dt;
     }
 
@@ -42,7 +42,7 @@ class MovementSystem implements System {
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const input = new InputManager();
 const renderer = new CanvasRenderer(canvas);
-const scene = new Scene('main');
+const scene = new Scene();
 
 const entity = new Entity(new SpriteRenderData());
 
@@ -52,7 +52,8 @@ entity.transform.scale.x = 0.5;
 entity.transform.scale.y = 2;
 entity.transform.rotation.z = half(Math.PI);
 
-scene.add(entity);
+scene.addEntity(entity);
+scene.addCamera(new Camera());
 
 handleRendererResize(renderer, () => ({
   width: window.innerWidth,
@@ -61,6 +62,6 @@ handleRendererResize(renderer, () => ({
 
 const engine = new Engine(renderer, input);
 
+engine.addScene(scene);
 engine.addSystem(new MovementSystem());
-engine.addView(scene, new Camera());
 engine.start();

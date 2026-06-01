@@ -1,19 +1,24 @@
+import type { Camera } from './camera';
 import type { Entity } from './entity';
 
 export class Scene {
-  readonly id: string;
   entities: Entity[] = [];
+  cameras: Camera[] = [];
 
-  constructor(sceneId: string) {
-    this.id = sceneId;
-  }
-
-  add(entity: Entity) {
+  addEntity(entity: Entity) {
     this.entities.push(entity);
   }
 
-  remove(/* entity: Entity */) {
+  addCamera(camera: Camera) {
+    this.cameras.push(camera);
+  }
+
+  removeEntity(/* entity: Entity */) {
     // TODO: Entity removal logic. Add UUID maybe?
+  }
+
+  removeCamera(/* camera: Camera */) {
+    // TODO: Camera removal logic. Add UUID maybe?
   }
 
   query(predicate: (entity: Entity) => boolean) {
