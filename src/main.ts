@@ -17,19 +17,19 @@ class MovementSystem implements System {
 
     for (const entity of scene.entities) {
       if (input.isDown('KeyW')) {
-        entity.transform.position.y -= this.v * dt;
+        entity.translate(0, -this.v * dt, 0);
       }
 
       if (input.isDown('KeyS')) {
-        entity.transform.position.y += this.v * dt;
+        entity.translate(0, this.v * dt, 0);
       }
 
       if (input.isDown('KeyA')) {
-        entity.transform.position.x -= this.v * dt;
+        entity.translate(-this.v * dt, 0, 0);
       }
 
       if (input.isDown('KeyD')) {
-        entity.transform.position.x += this.v * dt;
+        entity.translate(this.v * dt, 0, 0);
       }
     }
   }
