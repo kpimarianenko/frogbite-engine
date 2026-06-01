@@ -1,5 +1,5 @@
 import './reset.css';
-import { SpriteRenderData } from '@/components';
+import { SpriteComponent } from '@/components';
 import { Engine } from '@/core/engine';
 import { InputManager } from '@/core/input';
 import type { System, SystemContext } from '@/core/system';
@@ -51,7 +51,7 @@ sceneA.addCamera(
   })
 );
 
-const entityA = new Entity(new SpriteRenderData({ color: 'red' }));
+const entityA = new Entity(new SpriteComponent({ color: 'red' }));
 
 entityA.transform.position.x = 60;
 entityA.transform.position.y = 60;
@@ -70,7 +70,7 @@ sceneB.addCamera(
   })
 );
 
-const entityB = new Entity(new SpriteRenderData({ color: 'blue' }));
+const entityB = new Entity(new SpriteComponent({ color: 'blue' }));
 
 entityB.transform.position.x = 60;
 entityB.transform.position.y = 60;

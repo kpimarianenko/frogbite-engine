@@ -1,2 +1,2 @@
-export * from './render-data';
+export * from './render';
 export * from './transform';

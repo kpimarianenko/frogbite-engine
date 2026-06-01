@@ -1,4 +1,4 @@
-import type { RenderData } from '@/components';
+import type { RenderComponent } from '@/components';
 
 export class Entity {
   transform = {
@@ -7,10 +7,10 @@ export class Entity {
     scale: { x: 1, y: 1, z: 1 },
   };
 
-  renderData: RenderData | null = null;
+  render: RenderComponent | null = null;
   visible = true;
 
-  constructor(renderData: RenderData | null = null) {
-    this.renderData = renderData;
+  constructor(render: RenderComponent | null = null) {
+    this.render = render;
   }
 }

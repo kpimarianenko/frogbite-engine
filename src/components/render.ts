@@ -1,4 +1,4 @@
-export class SpriteRenderData {
+export class SpriteComponent {
   type = 'sprite' as const;
   width: number;
   height: number;
@@ -13,10 +13,10 @@ export class SpriteRenderData {
   }
 }
 
-export class MeshRenderData {
+export class MeshComponent {
   type = 'mesh' as const;
   vertices: number[] = [];
   indices: number[] = [];
 }
 
-export type RenderData = SpriteRenderData | MeshRenderData;
+export type RenderComponent = SpriteComponent | MeshComponent;
