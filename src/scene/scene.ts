@@ -1,9 +1,11 @@
+import type { System } from '@/core/system';
 import type { Camera } from './camera';
 import type { Entity } from './entity';
 
 export class Scene {
   entities: Entity[] = [];
   cameras: Camera[] = [];
+  systems: System[] = [];
 
   addEntity(entity: Entity) {
     this.entities.push(entity);
@@ -11,6 +13,10 @@ export class Scene {
 
   addCamera(camera: Camera) {
     this.cameras.push(camera);
+  }
+
+  addSystem(system: System) {
+    this.systems.push(system);
   }
 
   removeEntity(/* entity: Entity */) {

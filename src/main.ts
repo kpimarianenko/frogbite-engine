@@ -79,6 +79,7 @@ entityB.transform.position.x = 60;
 entityB.transform.position.y = 60;
 
 sceneB.addEntity(entityB);
+sceneB.addSystem(new MovementSystem());
 
 handleRendererResize(renderer, () => ({
   width: window.innerWidth,
@@ -89,5 +90,4 @@ const engine = new Engine(renderer, input);
 
 engine.addScene(sceneA);
 engine.addScene(sceneB);
-engine.addSystem(new MovementSystem());
 engine.start();

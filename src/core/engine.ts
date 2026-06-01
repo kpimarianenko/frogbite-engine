@@ -2,7 +2,6 @@ import { MILLIS_IN_SECOND } from '@/constants/time';
 import type { Renderer } from '@/render/renderer';
 import { RenderPipeline } from '@/render/render-pipeline';
 import type { InputManager } from './input';
-import type { System } from './system';
 import { Time } from './time';
 import { EventBus } from './events';
 import type { Scene } from '@/scene/scene';
@@ -20,7 +19,6 @@ export class Engine {
   renderer: Renderer;
   scenes: Scene[] = [];
   input: InputManager;
-  systems: System[] = [];
 
   constructor(renderer: Renderer, input: InputManager) {
     this.renderer = renderer;
@@ -49,8 +47,8 @@ export class Engine {
   };
 
   update(dt: number) {
-    for (const system of this.systems) {
-      for (const scene of this.scenes) {
+    for (const scene of this.scenes) {
+      for (const system of scene.systems) {
         system.update({
           scene,
           input: this.input,
@@ -63,8 +61,8 @@ export class Engine {
   }
 
   tick(dt: number) {
-    for (const system of this.systems) {
-      for (const scene of this.scenes) {
+    for (const scene of this.scenes) {
+      for (const system of scene.systems) {
         system.tick?.({
           scene,
           input: this.input,
@@ -86,9 +84,5 @@ export class Engine {
 
   addScene(scene: Scene) {
     this.scenes.push(scene);
-  }
-
-  addSystem(system: System) {
-    this.systems.push(system);
   }
 }
