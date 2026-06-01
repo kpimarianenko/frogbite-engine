@@ -1,4 +1,4 @@
-import type { Scene } from '@/scene/scene';
+import type { Scene } from '@/scene';
 import type { InputManager } from './input';
 
 export type SystemContext = {

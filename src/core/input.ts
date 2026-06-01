@@ -1,4 +1,4 @@
-import type { Vector2D } from '@/math/vector';
+import type { Vector2D } from '@/math';
 
 enum NativeMouseButton {
   Left = 0,
@@ -21,6 +21,39 @@ export class InputManager {
     window.addEventListener('mouseup', e => this.onKeyReleased(this.mapMouseButton(e.button)));
     window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('wheel', this.onWheel);
+  }
+
+  isDown(key: string) {
+    return this.keys.has(key);
+  }
+
+  wasPressed(key: string) {
+    return this.pressed.has(key);
+  }
+
+  wasReleased(key: string) {
+    return this.released.has(key);
+  }
+
+  getMousePosition() {
+    return this.mousePos;
+  }
+
+  getMouseDelta() {
+    return this.mouseDelta;
+  }
+
+  getWheelDelta() {
+    return this.wheelDelta;
+  }
+
+  update() {
+    this.pressed.clear();
+    this.released.clear();
+
+    this.mouseDelta.x = 0;
+    this.mouseDelta.y = 0;
+    this.wheelDelta = 0;
   }
 
   private mapMouseButton(button: number) {
@@ -67,37 +100,4 @@ export class InputManager {
   private onWheel = (e: WheelEvent) => {
     this.wheelDelta += e.deltaY;
   };
-
-  isDown(key: string) {
-    return this.keys.has(key);
-  }
-
-  wasPressed(key: string) {
-    return this.pressed.has(key);
-  }
-
-  wasReleased(key: string) {
-    return this.released.has(key);
-  }
-
-  getMousePosition() {
-    return this.mousePos;
-  }
-
-  getMouseDelta() {
-    return this.mouseDelta;
-  }
-
-  getWheelDelta() {
-    return this.wheelDelta;
-  }
-
-  update() {
-    this.pressed.clear();
-    this.released.clear();
-
-    this.mouseDelta.x = 0;
-    this.mouseDelta.y = 0;
-    this.wheelDelta = 0;
-  }
 }

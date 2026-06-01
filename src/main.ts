@@ -1,13 +1,10 @@
 import './reset.css';
-import { Engine } from './core/engine';
-import { CanvasRenderer } from './render/canvas-renderer';
-import { handleRendererResize } from './render/utils';
-import { Scene } from './scene/scene';
-import { Entity } from './scene/entity';
-import { SpriteRenderData } from './scene/renderable';
-import { InputManager } from './core/input';
-import type { System, SystemContext } from './core/system';
-import { Camera } from './scene/camera';
+import { SpriteRenderData } from '@/components';
+import { Engine } from '@/core/engine';
+import { InputManager } from '@/core/input';
+import type { System, SystemContext } from '@/core/system';
+import { CanvasRenderer, handleRendererResize } from '@/render';
+import { Camera, Entity, Scene } from '@/scene';
 
 class MovementSystem implements System {
   private v = 500;

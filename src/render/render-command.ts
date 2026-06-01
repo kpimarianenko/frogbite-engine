@@ -1,5 +1,5 @@
-import type { Viewport } from '@/scene/camera';
-import type { Transform } from '@/scene/transform';
+import type { Transform } from '@/components/transform';
+import type { Viewport } from '@/scene';
 
 export type SpriteRenderCommand = {
   type: 'sprite';

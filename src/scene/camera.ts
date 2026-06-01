@@ -1,5 +1,5 @@
-import type { Vector3D } from '@/math/vector';
-import type { Transform } from './transform';
+import type { Vector3D } from '@/math';
+import type { Transform } from '../components/transform';
 
 export type Viewport = {
   width: number;

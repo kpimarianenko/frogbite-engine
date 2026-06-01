@@ -19,4 +19,4 @@ export class MeshRenderData {
   indices: number[] = [];
 }
 
-export type Renderable = SpriteRenderData | MeshRenderData;
+export type RenderData = SpriteRenderData | MeshRenderData;

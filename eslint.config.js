@@ -1,9 +1,8 @@
-// TODO: add eslint-plugin-import rules
-// TODO: add class members/methods order rules
 import { fixupConfigRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import prettierConfig from 'eslint-config-prettier';
+import importX from 'eslint-plugin-import-x';
 import prettier from 'eslint-plugin-prettier';
 import path from 'path';
 import tseslint from 'typescript-eslint';
@@ -27,6 +26,7 @@ export default tseslint.config(
       ...fixupConfigRules(compat.extends('plugin:eslint-comments/recommended')),
     ],
     plugins: {
+      import: importX,
       prettier,
     },
     languageOptions: {
@@ -69,7 +69,48 @@ export default tseslint.config(
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unused-private-class-members': 'error',
       '@typescript-eslint/no-unsafe-enum-comparison': 'off',
+      '@typescript-eslint/member-ordering': [
+        'error',
+        {
+          default: {
+            memberTypes: [
+              // Static fields
+              'public-static-field',
+              'protected-static-field',
+              'private-static-field',
+
+              // Instance fields
+              'public-field',
+              'protected-field',
+              'private-field',
+
+              // Constructor
+              'constructor',
+
+              // Accessors (getters/setters)
+              'public-get',
+              'public-set',
+              'protected-get',
+              'protected-set',
+              'private-get',
+              'private-set',
+
+              // Static methods
+              'public-static-method',
+              'protected-static-method',
+              'private-static-method',
+
+              // Instance methods
+              'public-method',
+              'protected-method',
+              'private-method',
+            ],
+            order: 'as-written',
+          },
+        },
+      ],
       'no-unused-private-class-members': 'off',
+      'object-shorthand': ['error', 'always'],
       'arrow-body-style': ['error', 'as-needed'],
       'func-style': [
         'error',
@@ -98,30 +139,30 @@ export default tseslint.config(
           ignoreDeclarationSort: true,
         },
       ],
-      // 'import/no-default-export': 'error',
-      // 'import/order': [
-      //   'warn',
-      //   {
-      //     'newlines-between': 'always',
-      //     pathGroups: [
-      //       {
-      //         pattern: '@/**',
-      //         group: 'internal',
-      //         position: 'before',
-      //       },
-      //     ],
-      //     groups: [
-      //       ['external', 'builtin'],
-      //       ['internal', 'parent', 'sibling', 'index'],
-      //     ],
-      //     alphabetize: {
-      //       order: 'asc',
-      //       caseInsensitive: true,
-      //     },
-      //     distinctGroup: false,
-      //     pathGroupsExcludedImportTypes: ['internal'],
-      //   },
-      // ],
+      'import/no-default-export': 'error',
+      'import/order': [
+        'warn',
+        {
+          'newlines-between': 'always',
+          pathGroups: [
+            {
+              pattern: '@/**',
+              group: 'internal',
+              position: 'before',
+            },
+          ],
+          groups: [
+            ['external', 'builtin'],
+            ['internal', 'parent', 'sibling', 'index'],
+          ],
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true,
+          },
+          distinctGroup: false,
+          pathGroupsExcludedImportTypes: ['internal'],
+        },
+      ],
     },
   },
   {
