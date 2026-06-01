@@ -8,7 +8,6 @@ import { SpriteRenderData } from './scene/renderable';
 import { InputManager } from './core/input';
 import type { System, SystemContext } from './core/system';
 import { Camera } from './scene/camera';
-import { half } from './math/helpers';
 
 class MovementSystem implements System {
   private v = 500;
@@ -42,18 +41,44 @@ class MovementSystem implements System {
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 const input = new InputManager();
 const renderer = new CanvasRenderer(canvas);
-const scene = new Scene();
 
-const entity = new Entity(new SpriteRenderData());
+const sceneA = new Scene();
 
-entity.transform.position.x = 60;
-entity.transform.position.y = 60;
-entity.transform.scale.x = 0.5;
-entity.transform.scale.y = 2;
-entity.transform.rotation.z = half(Math.PI);
+sceneA.addCamera(
+  new Camera({
+    width: 0.5,
+    height: 1,
+    x: 0,
+    y: 0,
+    normalized: true,
+  })
+);
 
-scene.addEntity(entity);
-scene.addCamera(new Camera());
+const entityA = new Entity(new SpriteRenderData({ color: 'red' }));
+
+entityA.transform.position.x = 60;
+entityA.transform.position.y = 60;
+
+sceneA.addEntity(entityA);
+
+const sceneB = new Scene();
+
+sceneB.addCamera(
+  new Camera({
+    width: 0.5,
+    height: 1,
+    x: 0.5,
+    y: 0,
+    normalized: true,
+  })
+);
+
+const entityB = new Entity(new SpriteRenderData({ color: 'blue' }));
+
+entityB.transform.position.x = 60;
+entityB.transform.position.y = 60;
+
+sceneB.addEntity(entityB);
 
 handleRendererResize(renderer, () => ({
   width: window.innerWidth,
@@ -62,6 +87,7 @@ handleRendererResize(renderer, () => ({
 
 const engine = new Engine(renderer, input);
 
-engine.addScene(scene);
+engine.addScene(sceneA);
+engine.addScene(sceneB);
 engine.addSystem(new MovementSystem());
 engine.start();

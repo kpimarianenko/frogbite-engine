@@ -20,6 +20,7 @@ export class RenderPipeline {
         case 'sprite': {
           return {
             type: 'sprite',
+            viewport: camera.viewport,
             transform: renderTransform,
             width: renderData.width,
             height: renderData.height,
@@ -29,6 +30,7 @@ export class RenderPipeline {
         case 'mesh': {
           return {
             type: 'mesh',
+            viewport: camera.viewport,
             transform: renderTransform,
             vertices: renderData.vertices,
           };

@@ -1,7 +1,9 @@
+import type { Viewport } from '@/scene/camera';
 import type { Transform } from '@/scene/transform';
 
 export type SpriteRenderCommand = {
   type: 'sprite';
+  viewport: Viewport;
   transform: Transform;
   width: number;
   height: number;
@@ -10,6 +12,7 @@ export type SpriteRenderCommand = {
 
 export type MeshRenderCommand = {
   type: 'mesh';
+  viewport: Viewport;
   transform: Transform;
   vertices: number[];
 };

@@ -16,7 +16,6 @@ export class CanvasRenderer implements Renderer {
   }
 
   render(commands: RenderCommand[]): void {
-    this.clear();
     this.execute(commands);
   }
 
@@ -36,11 +35,29 @@ export class CanvasRenderer implements Renderer {
   }
 
   private drawSprite(command: SpriteRenderCommand) {
-    const { position, rotation, scale } = command.transform;
+    const { transform, viewport } = command;
+    const { position, rotation, scale } = transform;
+
+    const {
+      x: vpX,
+      y: vpY,
+      width: vpWidth,
+      height: vpHeight,
+    } = viewport.normalized
+      ? {
+          x: this.canvas.width * viewport.x,
+          y: this.canvas.height * viewport.y,
+          width: this.canvas.width * viewport.width,
+          height: this.canvas.height * viewport.height,
+        }
+      : viewport;
 
     this.ctx.save();
+    this.ctx.beginPath();
+    this.ctx.rect(vpX, vpY, vpWidth, vpHeight);
+    this.ctx.clip();
 
-    this.ctx.translate(position.x, position.y);
+    this.ctx.translate(position.x + vpX, position.y + vpY);
     this.ctx.rotate(rotation.z);
     this.ctx.scale(scale.x, scale.y);
 

@@ -75,6 +75,8 @@ export class Engine {
   }
 
   render() {
+    this.renderer.clear();
+
     for (const scene of this.scenes) {
       for (const camera of scene.cameras) {
         this.renderer.render(this.renderPipeline.build(scene, camera));
