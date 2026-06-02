@@ -67,7 +67,7 @@ export class OrthographicCamera implements BaseCamera {
     if (!this.viewMatrix) {
       const t = Matrix4x4.translation(-this.position.x, -this.position.y, -this.position.z);
       const r = Matrix4x4.rotationZ(-this.rotation);
-      const s = Matrix4x4.scale(this.zoom, this.zoom, this.zoom);
+      const s = Matrix4x4.scale(this.zoom, this.zoom, 1);
 
       this.viewMatrix = Matrix4x4.multiply(s, Matrix4x4.multiply(r, t)).data;
     }
