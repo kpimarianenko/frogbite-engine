@@ -26,8 +26,8 @@ export class OrthographicCamera implements BaseCamera {
   readonly type = CameraType.Orthographic as const;
 
   private position: Vector3D = { x: 0, y: 0, z: 0 };
-  private rotation: number = 0;
-  private zoom: number = 1;
+  private rotation = 0;
+  private zoom = 1;
 
   private viewMatrix: Float32Array | null = null;
   private projectionMatrix: Float32Array | null = null;

@@ -69,6 +69,7 @@ export default tseslint.config(
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-unused-private-class-members': 'error',
       '@typescript-eslint/no-unsafe-enum-comparison': 'off',
+      '@typescript-eslint/no-inferrable-types': 'error',
       '@typescript-eslint/member-ordering': [
         'error',
         {
