@@ -4,7 +4,7 @@ import { Engine } from '@/core/engine';
 import { InputManager } from '@/core/input';
 import type { System, SystemContext } from '@/core/system';
 import { CanvasRenderer, handleRendererResize } from '@/render';
-import { Camera, Entity, Scene } from '@/scene';
+import { Entity, OrthographicCamera, Scene } from '@/scene';
 
 class MovementSystem implements System {
   private v = 500;
@@ -12,7 +12,7 @@ class MovementSystem implements System {
 
   update({ scene, input, dt }: SystemContext): void {
     for (const camera of scene.cameras) {
-      camera.transform.position.x += this.cv * dt;
+      camera.position.x += this.cv * dt;
     }
 
     for (const entity of scene.entities) {
@@ -42,7 +42,7 @@ const renderer = new CanvasRenderer(canvas);
 const sceneA = new Scene();
 
 sceneA.addCamera(
-  new Camera({
+  new OrthographicCamera({
     width: 0.5,
     height: 1,
     x: 0,
@@ -61,7 +61,7 @@ sceneA.addEntity(entityA);
 const sceneB = new Scene();
 
 sceneB.addCamera(
-  new Camera({
+  new OrthographicCamera({
     width: 0.5,
     height: 1,
     x: 0.5,

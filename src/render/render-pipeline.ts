@@ -1,26 +1,28 @@
+import { Matrix4x4 } from '@/math';
 import type { Camera, Scene } from '@/scene';
 import type { RenderCommand } from './render-command';
 
 export class RenderPipeline {
   build(scene: Scene, camera: Camera) {
     const entities = scene.query(e => !!e.render && e.visible);
+    const view = camera.getViewMatrix();
+    const projection = camera.getProjectionMatrix();
+
+    const viewMat = new Matrix4x4(view);
+    const projectionMat = new Matrix4x4(projection);
 
     return entities.map<RenderCommand>(entity => {
-      const { worldTransform } = entity;
-      const projectedPosition = camera.project(worldTransform.position);
       const render = entity.render!;
-      const renderTransform = {
-        position: projectedPosition,
-        rotation: worldTransform.rotation,
-        scale: worldTransform.scale,
-      };
+      const mv = Matrix4x4.multiply(viewMat, entity.worldMatrix);
+      const mvp = Matrix4x4.multiply(projectionMat, mv);
 
       switch (render.type) {
         case 'sprite': {
           return {
             type: 'sprite',
             viewport: camera.viewport,
-            transform: renderTransform,
+            viewMatrix: mv.data,
+            worldMatrix: mvp.data,
             width: render.width,
             height: render.height,
             color: render.color,
@@ -30,7 +32,8 @@ export class RenderPipeline {
           return {
             type: 'mesh',
             viewport: camera.viewport,
-            transform: renderTransform,
+            viewMatrix: mv.data,
+            worldMatrix: mvp.data,
             vertices: render.vertices,
           };
         }

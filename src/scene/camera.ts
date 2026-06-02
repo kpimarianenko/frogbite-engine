@@ -1,5 +1,4 @@
-import type { Vector3D } from '@/math';
-import type { Transform } from '../components/transform';
+import { Matrix4x4, type Vector3D } from '@/math';
 
 export type Viewport = {
   width: number;
@@ -9,23 +8,43 @@ export type Viewport = {
   normalized: boolean;
 };
 
-export class Camera {
+export interface Camera {
   viewport: Viewport;
-  transform: Transform = {
-    position: { x: 0, y: 0, z: 0 },
-    rotation: { x: 0, y: 0, z: 0 },
-    scale: { x: 0, y: 0, z: 0 },
-  };
+  position: Vector3D;
+  getProjectionMatrix(): Float32Array;
+  getViewMatrix(): Float32Array;
+}
 
-  constructor(viewport: Viewport = { width: 1, height: 1, x: 0, y: 0, normalized: true }) {
+export class OrthographicCamera implements Camera {
+  zoom: number = 1;
+  viewport: Viewport;
+  position: Vector3D = { x: 0, y: 0, z: 0 };
+  private viewMatrix: Float32Array | null = null;
+  private projectionMatrix: Float32Array | null = null;
+
+  constructor(viewport: Viewport) {
     this.viewport = viewport;
   }
 
-  project(v: Vector3D): Vector3D {
-    return {
-      x: v.x - this.transform.position.x,
-      y: v.y - this.transform.position.y,
-      z: v.z - this.transform.position.z,
-    };
+  getViewMatrix() {
+    if (!this.viewMatrix) {
+      this.viewMatrix = Matrix4x4.translation(
+        -this.position.x,
+        -this.position.y,
+        -this.position.z
+      ).data;
+    }
+
+    return this.viewMatrix;
+  }
+
+  getProjectionMatrix() {
+    if (!this.projectionMatrix) {
+      const { width, height } = this.viewport;
+
+      this.projectionMatrix = Matrix4x4.orthographic(0, width, height, 0, -1, 1).data;
+    }
+
+    return this.projectionMatrix;
   }
 }

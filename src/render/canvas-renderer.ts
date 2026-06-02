@@ -1,5 +1,6 @@
 import { half } from '@/math';
-import type { MeshRenderCommand, RenderCommand, SpriteRenderCommand } from './render-command';
+import type { Viewport } from '@/scene';
+import type { RenderCommand, SpriteRenderCommand } from './render-command';
 import type { Renderer } from './renderer';
 
 export class CanvasRenderer implements Renderer {
@@ -44,39 +45,23 @@ export class CanvasRenderer implements Renderer {
           break;
         }
         case 'mesh': {
-          this.drawMesh(command);
-          break;
+          throw new Error('Mesh rendering is not supported in CanvasRenderer');
         }
       }
     }
   }
 
   private drawSprite(command: SpriteRenderCommand) {
-    const { transform, viewport } = command;
-    const { position, rotation, scale } = transform;
-
-    const {
-      x: vpX,
-      y: vpY,
-      width: vpWidth,
-      height: vpHeight,
-    } = viewport.normalized
-      ? {
-          x: this.canvas.width * viewport.x,
-          y: this.canvas.height * viewport.y,
-          width: this.canvas.width * viewport.width,
-          height: this.canvas.height * viewport.height,
-        }
-      : viewport;
+    const { viewMatrix: m, viewport } = command;
+    const { x: vpX, y: vpY, width: vpWidth, height: vpHeight } = this.resolveViewport(viewport);
 
     this.ctx.save();
     this.ctx.beginPath();
     this.ctx.rect(vpX, vpY, vpWidth, vpHeight);
     this.ctx.clip();
 
-    this.ctx.translate(position.x + vpX, position.y + vpY);
-    this.ctx.rotate(rotation.z);
-    this.ctx.scale(scale.x, scale.y);
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    this.ctx.setTransform(m[0], m[1], m[4], m[5], m[12] + vpX, m[13] + vpY);
 
     this.ctx.fillStyle = command.color;
     this.ctx.fillRect(-half(command.width), -half(command.height), command.width, command.height);
@@ -84,8 +69,14 @@ export class CanvasRenderer implements Renderer {
     this.ctx.restore();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private drawMesh(command: MeshRenderCommand) {
-    // TODO: Implement 3D logic
+  private resolveViewport(viewport: Viewport) {
+    return viewport.normalized
+      ? {
+          x: this.canvas.width * viewport.x,
+          y: this.canvas.height * viewport.y,
+          width: this.canvas.width * viewport.width,
+          height: this.canvas.height * viewport.height,
+        }
+      : { x: viewport.x, y: viewport.y, width: viewport.width, height: viewport.height };
   }
 }

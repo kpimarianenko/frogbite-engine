@@ -1,19 +1,20 @@
-import type { Transform } from '@/components/transform';
 import type { Viewport } from '@/scene';
 
-export type SpriteRenderCommand = {
-  type: 'sprite';
+type BaseRenderCommand = {
   viewport: Viewport;
-  transform: Transform;
+  viewMatrix: Float32Array;
+  worldMatrix: Float32Array;
+};
+
+export type SpriteRenderCommand = BaseRenderCommand & {
+  type: 'sprite';
   width: number;
   height: number;
   color: string;
 };
 
-export type MeshRenderCommand = {
+export type MeshRenderCommand = BaseRenderCommand & {
   type: 'mesh';
-  viewport: Viewport;
-  transform: Transform;
   vertices: number[];
 };
 

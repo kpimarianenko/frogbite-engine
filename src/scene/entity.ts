@@ -1,9 +1,12 @@
-import { defaultTransform, type RenderComponent, type Transform } from '@/components';
+import { defaultTransform, type RenderComponent } from '@/components';
+import { Matrix4x4 } from '@/math';
 
 export class Entity {
   id: string = crypto.randomUUID();
   transform = defaultTransform();
-  worldTransform = defaultTransform();
+
+  localMatrix: Matrix4x4 = Matrix4x4.identity();
+  worldMatrix: Matrix4x4 = Matrix4x4.identity();
 
   parent: Entity | null = null;
   children: Entity[] = [];
@@ -30,45 +33,25 @@ export class Entity {
     }
   }
 
-  updateWorldTransform(parentWorldTransform?: Transform) {
+  updateLocalMatrix() {
+    const { position, rotation, scale } = this.transform;
+
+    this.localMatrix = Matrix4x4.trs(position, rotation, scale);
+  }
+
+  updateWorldTransform(parentWorldMatrix?: Matrix4x4) {
     if (this.dirty) {
-      if (parentWorldTransform) {
-        this.worldTransform.position.x =
-          parentWorldTransform.position.x + this.transform.position.x;
-        this.worldTransform.position.y =
-          parentWorldTransform.position.y + this.transform.position.y;
-        this.worldTransform.position.z =
-          parentWorldTransform.position.z + this.transform.position.z;
+      this.updateLocalMatrix();
 
-        this.worldTransform.rotation.x =
-          parentWorldTransform.rotation.x + this.transform.rotation.x;
-        this.worldTransform.rotation.y =
-          parentWorldTransform.rotation.y + this.transform.rotation.y;
-        this.worldTransform.rotation.z =
-          parentWorldTransform.rotation.z + this.transform.rotation.z;
-
-        this.worldTransform.scale.x = parentWorldTransform.scale.x * this.transform.scale.x;
-        this.worldTransform.scale.y = parentWorldTransform.scale.y * this.transform.scale.y;
-        this.worldTransform.scale.z = parentWorldTransform.scale.z * this.transform.scale.z;
-      } else {
-        this.worldTransform.position.x = this.transform.position.x;
-        this.worldTransform.position.y = this.transform.position.y;
-        this.worldTransform.position.z = this.transform.position.z;
-
-        this.worldTransform.rotation.x = this.transform.rotation.x;
-        this.worldTransform.rotation.y = this.transform.rotation.y;
-        this.worldTransform.rotation.z = this.transform.rotation.z;
-
-        this.worldTransform.scale.x = this.transform.scale.x;
-        this.worldTransform.scale.y = this.transform.scale.y;
-        this.worldTransform.scale.z = this.transform.scale.z;
-      }
+      this.worldMatrix = parentWorldMatrix
+        ? Matrix4x4.multiply(parentWorldMatrix, this.localMatrix)
+        : this.localMatrix;
 
       this.dirty = false;
     }
 
     for (const child of this.children) {
-      child.updateWorldTransform(this.worldTransform);
+      child.updateWorldTransform(this.worldMatrix);
     }
   }
 
