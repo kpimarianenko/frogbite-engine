@@ -12,6 +12,7 @@ export class CanvasRenderer implements Renderer {
   constructor(canvas: HTMLCanvasElement, assets: AssetManager) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d')!;
+    this.ctx.imageSmoothingEnabled = false;
     this.assets = assets;
   }
 
@@ -38,6 +39,7 @@ export class CanvasRenderer implements Renderer {
 
     this.ctx.resetTransform();
     this.ctx.scale(dpr, dpr);
+    this.ctx.imageSmoothingEnabled = false;
   }
 
   private execute(commands: RenderCommand[]) {
