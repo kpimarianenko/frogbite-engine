@@ -11,7 +11,7 @@ export enum RenderCommandType {
 
 export type SpriteRenderCommand = BaseRenderCommand & {
   type: RenderCommandType.Sprite;
-  viewMatrix: Float32Array;
+  mvMatrix: Float32Array;
   width: number;
   height: number;
   color: string;
@@ -19,7 +19,7 @@ export type SpriteRenderCommand = BaseRenderCommand & {
 
 export type MeshRenderCommand = BaseRenderCommand & {
   type: RenderCommandType.Mesh;
-  worldMatrix: Float32Array; // TODO: Rename?
+  mvpMatrix: Float32Array;
   vertices: number[];
 };
 

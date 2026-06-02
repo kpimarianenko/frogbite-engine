@@ -7,6 +7,8 @@ import { CanvasRenderer, handleRendererResize } from '@/render';
 import { CameraType, Entity, OrthographicCamera, Scene } from '@/scene';
 
 class MovementSystem implements System {
+  readonly id: string = crypto.randomUUID();
+
   private v = 500;
   private cv = 10;
   private cz = 1.5;

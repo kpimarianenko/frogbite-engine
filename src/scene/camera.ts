@@ -14,6 +14,7 @@ export enum CameraType {
 }
 
 interface BaseCamera {
+  readonly id: string;
   viewport: Viewport;
   getPosition(): Readonly<Vector3D>;
   setPosition(x: number, y: number, z: number): void;
@@ -22,6 +23,7 @@ interface BaseCamera {
 }
 
 export class OrthographicCamera implements BaseCamera {
+  readonly id: string = crypto.randomUUID();
   viewport: Viewport;
   readonly type = CameraType.Orthographic as const;
 
@@ -90,6 +92,7 @@ export class OrthographicCamera implements BaseCamera {
 
 // TODO: Implement perspective camera
 export class PerspectiveCamera implements BaseCamera {
+  readonly id: string = crypto.randomUUID();
   viewport: Viewport;
   readonly type = CameraType.Perspective as const;
 

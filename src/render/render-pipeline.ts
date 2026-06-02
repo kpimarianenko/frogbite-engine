@@ -9,8 +9,6 @@ export class RenderPipeline {
     const viewMat = new Matrix4x4(camera.getViewMatrix());
     const projMat = new Matrix4x4(camera.getProjectionMatrix());
 
-    // TODO: scene.query should be executed only once
-
     for (const entity of scene.query(SpriteComponent)) {
       const sprite = entity.getComponent(SpriteComponent)!;
       const mv = Matrix4x4.multiply(viewMat, entity.worldMatrix);
@@ -18,7 +16,7 @@ export class RenderPipeline {
       commands.push({
         type: RenderCommandType.Sprite,
         viewport: camera.viewport,
-        viewMatrix: mv.data,
+        mvMatrix: mv.data,
         width: sprite.width,
         height: sprite.height,
         color: sprite.color,
@@ -33,7 +31,7 @@ export class RenderPipeline {
       commands.push({
         type: RenderCommandType.Mesh,
         viewport: camera.viewport,
-        worldMatrix: mvp.data,
+        mvpMatrix: mvp.data,
         vertices: mesh.vertices,
       });
     }

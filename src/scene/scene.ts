@@ -26,12 +26,28 @@ export class Scene {
     this.systems.push(system);
   }
 
-  removeEntity(/* entity: Entity */) {
-    // TODO: Entity removal logic. Add UUID maybe?
+  removeEntity(entity: Entity) {
+    const index = this.entities.findIndex(e => e.id === entity.id);
+
+    if (index >= 0) {
+      this.entities.splice(index, 1);
+    }
   }
 
-  removeCamera(/* camera: Camera */) {
-    // TODO: Camera removal logic. Add UUID maybe?
+  removeCamera(camera: Camera) {
+    const index = this.cameras.findIndex(c => c === camera);
+
+    if (index >= 0) {
+      this.cameras.splice(index, 1);
+    }
+  }
+
+  removeSystem(system: System) {
+    const index = this.systems.findIndex(s => s === system);
+
+    if (index >= 0) {
+      this.systems.splice(index, 1);
+    }
   }
 
   getRootEntities() {

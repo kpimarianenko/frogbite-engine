@@ -52,7 +52,7 @@ export class CanvasRenderer implements Renderer {
   }
 
   private drawSprite(command: SpriteRenderCommand) {
-    const { viewMatrix: m, viewport } = command;
+    const { mvMatrix: m, viewport } = command;
     const { x: vpX, y: vpY, width: vpWidth, height: vpHeight } = this.resolveViewport(viewport);
 
     this.ctx.save();
