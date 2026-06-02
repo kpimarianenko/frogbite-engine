@@ -4,17 +4,25 @@ import { Engine } from '@/core/engine';
 import { InputManager } from '@/core/input';
 import type { System, SystemContext } from '@/core/system';
 import { CanvasRenderer, handleRendererResize } from '@/render';
-import { Entity, OrthographicCamera, Scene } from '@/scene';
+import { CameraType, Entity, OrthographicCamera, Scene } from '@/scene';
 
 class MovementSystem implements System {
   private v = 500;
   private cv = 10;
+  private cz = 1.5;
+  private crd = -12;
+  private cr = Math.PI / this.crd;
 
   update({ scene, input, dt }: SystemContext): void {
     for (const camera of scene.cameras) {
       const cameraPos = camera.getPosition();
 
       camera.setPosition(cameraPos.x + this.cv * dt, cameraPos.y, cameraPos.z);
+
+      if (camera.type === CameraType.Orthographic) {
+        camera.setZoom(this.cz);
+        camera.setRotation(-this.cr);
+      }
     }
 
     for (const entity of scene.entities) {
