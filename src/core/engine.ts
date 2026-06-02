@@ -1,3 +1,4 @@
+import { RigidBodyComponent } from '@/components';
 import { MILLIS_IN_SECOND } from '@/constants/time';
 import type { PhysicsEngine } from '@/physics';
 import { RenderPipeline } from '@/render';
@@ -14,7 +15,7 @@ export class FrogbiteEngine {
   renderer: Renderer;
   scenes: Scene[] = [];
   input: InputManager;
-  physics: PhysicsEngine;
+  physics: PhysicsEngine | null;
 
   private lastTime = 0;
   private tickAccumulator = 0;
@@ -22,7 +23,7 @@ export class FrogbiteEngine {
   private readonly TICK_RATE = 60;
   private readonly TICK_TIME_STEP = 1 / this.TICK_RATE;
 
-  constructor(renderer: Renderer, input: InputManager, physics: PhysicsEngine) {
+  constructor(renderer: Renderer, input: InputManager, physics: PhysicsEngine | null = null) {
     this.renderer = renderer;
     this.input = input;
     this.physics = physics;
@@ -47,9 +48,11 @@ export class FrogbiteEngine {
   }
 
   tick(dt: number) {
-    this.physics?.step(dt);
-
     for (const scene of this.scenes) {
+      const bodies = scene.query(RigidBodyComponent);
+
+      this.physics?.step(bodies, dt);
+
       for (const system of scene.systems) {
         system.tick?.({
           scene,

@@ -1,37 +1,22 @@
-import { RigidBodyComponent, type RigidBodyOptions } from '@/components';
+import { RigidBodyComponent } from '@/components';
 import type { Vector3D } from '@/math';
 import type { Entity } from '@/scene';
-import { PhysicsEngine } from './base-engine';
+import { PhysicsEngine } from './base-physics-engine';
 
 export class FrogbitePhysicsEngine extends PhysicsEngine {
-  private bodies: Entity[] = [];
   private gravity: Vector3D = { x: 0, y: 9.81, z: 0 };
 
   setGravity(x: number, y: number, z: number) {
     this.gravity = { x, y, z };
   }
 
-  addBody(entity: Entity, options: RigidBodyOptions) {
-    entity.addComponent(new RigidBodyComponent(options));
+  step(bodies: Entity[], dt: number) {
+    this.integrate(bodies, dt);
+    this.detectCollisions(bodies);
   }
 
-  removeBody(entity: Entity): void {
-    const index = this.bodies.indexOf(entity);
-
-    if (index >= 0) {
-      this.bodies.splice(index, 1);
-    }
-
-    entity.removeComponent(RigidBodyComponent);
-  }
-
-  step(dt: number) {
-    this.integrate(dt);
-    this.detectCollisions();
-  }
-
-  private integrate(dt: number) {
-    for (const entity of this.bodies) {
+  private integrate(bodies: Entity[], dt: number) {
+    for (const entity of bodies) {
       const body = entity.getComponent(RigidBodyComponent)!;
 
       if (body.isStatic) {
@@ -54,9 +39,9 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
     }
   }
 
-  private detectCollisions() {
-    for (let i = 0; i < this.bodies.length; i++) {
-      for (let j = i + 1; j < this.bodies.length; j++) {
+  private detectCollisions(bodies: Entity[]) {
+    for (let i = 0; i < bodies.length; i++) {
+      for (let j = i + 1; j < bodies.length; j++) {
         // const a = this.bodies[i];
         // const b = this.bodies[j];
         // TODO: collision detection + response

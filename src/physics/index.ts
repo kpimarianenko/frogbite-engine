@@ -1,3 +1,3 @@
-export * from './base-engine';
-export * from './engine';
+export * from './base-physics-engine';
+export * from './physics-engine';
 export * from './shapes';

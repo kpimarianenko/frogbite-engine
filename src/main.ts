@@ -1,5 +1,5 @@
 import './reset.css';
-import { SpriteComponent } from '@/components';
+import { RigidBodyComponent, SpriteComponent } from '@/components';
 import { FrogbiteEngine } from '@/core/engine';
 import { InputManager } from '@/core/input';
 import type { System, SystemContext } from '@/core/system';
@@ -7,7 +7,7 @@ import { CanvasRenderer, handleRendererResize } from '@/render';
 import { Entity, OrthographicCamera, Scene } from '@/scene';
 import { AssetManager } from './core/asset-manager';
 import { half } from './math';
-import { FrogbitePhysicsEngine } from './physics';
+import { FrogbitePhysicsEngine, ShapeType } from './physics';
 
 class MovementSystem implements System {
   readonly id: string = crypto.randomUUID();
@@ -50,6 +50,16 @@ const main = async () => {
   const entity = new Entity();
 
   entity.addComponent(new SpriteComponent({ width: 160, height: 160, texture: 'player' }));
+  entity.addComponent(
+    new RigidBodyComponent({
+      shape: {
+        type: ShapeType.Box,
+        width: 160,
+        height: 160,
+        depth: 0,
+      },
+    })
+  );
   entity.setPosition(half(window.innerWidth), half(window.innerHeight), 0);
   scene.addEntity(entity);
   scene.addCamera(camera);
