@@ -2,7 +2,6 @@ import { Component, type ComponentConstructor, TransformComponent } from '@/comp
 import { Matrix4x4 } from '@/math';
 
 export class Entity {
-  readonly id: string = crypto.randomUUID();
   readonly transform: TransformComponent;
 
   localMatrix: Matrix4x4 = Matrix4x4.identity();
@@ -27,7 +26,7 @@ export class Entity {
   }
 
   removeChild(child: Entity) {
-    const index = this.children.findIndex(c => c.id === child.id);
+    const index = this.children.indexOf(child);
 
     if (index >= 0) {
       child.parent = null;
