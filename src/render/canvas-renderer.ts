@@ -1,3 +1,4 @@
+import type { AssetManager } from '@/core/asset-manager';
 import { half } from '@/math';
 import type { Viewport } from '@/scene';
 import type { RenderCommand, SpriteRenderCommand } from './render-command';
@@ -6,10 +7,12 @@ import type { Renderer } from './renderer';
 export class CanvasRenderer implements Renderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
+  private assets: AssetManager;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, assets: AssetManager) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext('2d')!;
+    this.assets = assets;
   }
 
   get context() {
@@ -63,8 +66,30 @@ export class CanvasRenderer implements Renderer {
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     this.ctx.setTransform(m[0], m[1], m[4], m[5], m[12] + vpX, m[13] + vpY);
 
-    this.ctx.fillStyle = command.color;
-    this.ctx.fillRect(-half(command.width), -half(command.height), command.width, command.height);
+    if (command.texture) {
+      const img = this.assets.get(command.texture);
+
+      if (img) {
+        this.ctx.drawImage(
+          img,
+          -half(command.width),
+          -half(command.height),
+          command.width,
+          command.height
+        );
+      } else {
+        this.ctx.fillStyle = command.color;
+        this.ctx.fillRect(
+          -half(command.width),
+          -half(command.height),
+          command.width,
+          command.height
+        );
+      }
+    } else {
+      this.ctx.fillStyle = command.color;
+      this.ctx.fillRect(-half(command.width), -half(command.height), command.width, command.height);
+    }
 
     this.ctx.restore();
   }

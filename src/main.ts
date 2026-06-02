@@ -4,29 +4,15 @@ import { Engine } from '@/core/engine';
 import { InputManager } from '@/core/input';
 import type { System, SystemContext } from '@/core/system';
 import { CanvasRenderer, handleRendererResize } from '@/render';
-import { CameraType, Entity, OrthographicCamera, Scene } from '@/scene';
+import { Entity, OrthographicCamera, Scene } from '@/scene';
+import { AssetManager } from './core/asset-manager';
+import { half } from './math';
 
 class MovementSystem implements System {
   readonly id: string = crypto.randomUUID();
-
   private v = 500;
-  private cv = 10;
-  private cz = 1.5;
-  private crd = -12;
-  private cr = Math.PI / this.crd;
 
   update({ scene, input, dt }: SystemContext): void {
-    for (const camera of scene.cameras) {
-      const cameraPos = camera.getPosition();
-
-      camera.setPosition(cameraPos.x + this.cv * dt, cameraPos.y, cameraPos.z);
-
-      if (camera.type === CameraType.Orthographic) {
-        camera.setZoom(this.cz);
-        camera.setRotation(-this.cr);
-      }
-    }
-
     for (const entity of scene.entities) {
       if (input.isDown('KeyW')) {
         entity.translate(0, -this.v * dt, 0);
@@ -47,69 +33,37 @@ class MovementSystem implements System {
   }
 }
 
-const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-const input = new InputManager();
-const renderer = new CanvasRenderer(canvas);
+const main = async () => {
+  const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+  const input = new InputManager();
+  const assets = new AssetManager();
+  const renderer = new CanvasRenderer(canvas, assets);
 
-const sceneA = new Scene();
+  await assets.loadAll({
+    player: '/assets/player.png',
+    tile: '/assets/tile.png',
+  });
 
-sceneA.addCamera(
-  new OrthographicCamera({
-    width: 0.5,
-    height: 1,
-    x: 0,
-    y: 0,
-    normalized: true,
-  })
-);
+  const scene = new Scene();
+  const camera = new OrthographicCamera();
+  const entity = new Entity();
 
-const entityA = new Entity();
+  entity.addComponent(new SpriteComponent({ width: 160, height: 160, texture: 'player' }));
+  entity.setPosition(half(window.innerWidth), half(window.innerHeight), 0);
+  scene.addEntity(entity);
+  scene.addCamera(camera);
+  scene.addSystem(new MovementSystem());
 
-entityA.addComponent(new SpriteComponent({ color: 'red' }));
+  const engine = new Engine(renderer, input);
 
-entityA.transform.position.x = 60;
-entityA.transform.position.y = 60;
+  handleRendererResize(renderer, () => ({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  }));
 
-sceneA.addEntity(entityA);
+  engine.addScene(scene);
+  engine.start();
+};
 
-const sceneB = new Scene();
-
-sceneB.addCamera(
-  new OrthographicCamera({
-    width: 0.5,
-    height: 1,
-    x: 0.5,
-    y: 0,
-    normalized: true,
-  })
-);
-
-const entityB = new Entity();
-
-entityB.addComponent(new SpriteComponent({ color: 'blue' }));
-
-entityB.transform.position.x = 60;
-entityB.transform.position.y = 60;
-
-const entityBChild = new Entity();
-
-entityBChild.addComponent(new SpriteComponent({ width: 20, height: 20, color: 'red' }));
-
-entityBChild.transform.position.x = 20;
-entityBChild.transform.position.y = 20;
-
-entityB.addChild(entityBChild);
-
-sceneB.addEntity(entityB);
-sceneB.addSystem(new MovementSystem());
-
-handleRendererResize(renderer, () => ({
-  width: window.innerWidth,
-  height: window.innerHeight,
-}));
-
-const engine = new Engine(renderer, input);
-
-engine.addScene(sceneA);
-engine.addScene(sceneB);
-engine.start();
+// eslint-disable-next-line no-console
+main().catch(console.error);

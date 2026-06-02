@@ -20,6 +20,7 @@ export class RenderPipeline {
         width: sprite.width,
         height: sprite.height,
         color: sprite.color,
+        texture: sprite.texture,
       });
     }
 

@@ -15,6 +15,7 @@ export type SpriteRenderCommand = BaseRenderCommand & {
   width: number;
   height: number;
   color: string;
+  texture: string | null;
 };
 
 export type MeshRenderCommand = BaseRenderCommand & {

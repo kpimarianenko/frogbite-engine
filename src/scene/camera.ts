@@ -34,7 +34,7 @@ export class OrthographicCamera implements BaseCamera {
   private viewMatrix: Float32Array | null = null;
   private projectionMatrix: Float32Array | null = null;
 
-  constructor(viewport: Viewport) {
+  constructor(viewport: Viewport = { x: 0, y: 0, width: 1, height: 1, normalized: true }) {
     this.viewport = viewport;
   }
 
