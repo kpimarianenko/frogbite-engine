@@ -2,19 +2,24 @@ import type { Viewport } from '@/scene';
 
 type BaseRenderCommand = {
   viewport: Viewport;
-  viewMatrix: Float32Array;
-  worldMatrix: Float32Array;
 };
 
+export enum RenderCommandType {
+  Sprite = 'sprite',
+  Mesh = 'mesh',
+}
+
 export type SpriteRenderCommand = BaseRenderCommand & {
-  type: 'sprite';
+  type: RenderCommandType.Sprite;
+  viewMatrix: Float32Array;
   width: number;
   height: number;
   color: string;
 };
 
 export type MeshRenderCommand = BaseRenderCommand & {
-  type: 'mesh';
+  type: RenderCommandType.Mesh;
+  worldMatrix: Float32Array; // TODO: Rename?
   vertices: number[];
 };
 

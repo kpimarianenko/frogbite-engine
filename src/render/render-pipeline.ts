@@ -1,41 +1,43 @@
-import { SpriteComponent } from '@/components';
+import { MeshComponent, SpriteComponent } from '@/components';
 import { Matrix4x4 } from '@/math';
 import type { Camera, Scene } from '@/scene';
-import type { RenderCommand } from './render-command';
+import { type RenderCommand, RenderCommandType } from './render-command';
 
 export class RenderPipeline {
   build(scene: Scene, camera: Camera) {
-    const entities = scene.query(SpriteComponent);
-    const view = camera.getViewMatrix();
-    const projection = camera.getProjectionMatrix();
+    const commands: RenderCommand[] = [];
+    const viewMat = new Matrix4x4(camera.getViewMatrix());
+    const projMat = new Matrix4x4(camera.getProjectionMatrix());
 
-    const viewMat = new Matrix4x4(view);
-    const projectionMat = new Matrix4x4(projection);
+    // TODO: scene.query should be executed only once
 
-    return entities.map<RenderCommand>(entity => {
+    for (const entity of scene.query(SpriteComponent)) {
       const sprite = entity.getComponent(SpriteComponent)!;
       const mv = Matrix4x4.multiply(viewMat, entity.worldMatrix);
-      const mvp = Matrix4x4.multiply(projectionMat, mv);
 
-      return {
-        type: 'sprite',
+      commands.push({
+        type: RenderCommandType.Sprite,
         viewport: camera.viewport,
         viewMatrix: mv.data,
-        worldMatrix: mvp.data,
         width: sprite.width,
         height: sprite.height,
         color: sprite.color,
-      };
+      });
+    }
 
-      // case 'mesh': {
-      //   return {
-      //     type: 'mesh',
-      //     viewport: camera.viewport,
-      //     viewMatrix: mv.data,
-      //     worldMatrix: mvp.data,
-      //     vertices: render.vertices,
-      //   };
-      // }
-    });
+    for (const entity of scene.query(MeshComponent)) {
+      const mesh = entity.getComponent(MeshComponent)!;
+      const mv = Matrix4x4.multiply(viewMat, entity.worldMatrix);
+      const mvp = Matrix4x4.multiply(projMat, mv);
+
+      commands.push({
+        type: RenderCommandType.Mesh,
+        viewport: camera.viewport,
+        worldMatrix: mvp.data,
+        vertices: mesh.vertices,
+      });
+    }
+
+    return commands;
   }
 }
