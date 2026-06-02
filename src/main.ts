@@ -8,11 +8,13 @@ import { Entity, OrthographicCamera, Scene } from '@/scene';
 
 class MovementSystem implements System {
   private v = 500;
-  private cv = 5;
+  private cv = 10;
 
   update({ scene, input, dt }: SystemContext): void {
     for (const camera of scene.cameras) {
-      camera.position.x += this.cv * dt;
+      const cameraPos = camera.getPosition();
+
+      camera.setPosition(cameraPos.x + this.cv * dt, cameraPos.y, cameraPos.z);
     }
 
     for (const entity of scene.entities) {

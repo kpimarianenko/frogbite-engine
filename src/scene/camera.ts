@@ -10,7 +10,8 @@ export type Viewport = {
 
 export interface Camera {
   viewport: Viewport;
-  position: Vector3D;
+  getPosition(): Readonly<Vector3D>;
+  setPosition(x: number, y: number, z: number): void;
   getProjectionMatrix(): Float32Array;
   getViewMatrix(): Float32Array;
 }
@@ -18,12 +19,21 @@ export interface Camera {
 export class OrthographicCamera implements Camera {
   zoom: number = 1;
   viewport: Viewport;
-  position: Vector3D = { x: 0, y: 0, z: 0 };
+  private position: Vector3D = { x: 0, y: 0, z: 0 };
   private viewMatrix: Float32Array | null = null;
   private projectionMatrix: Float32Array | null = null;
 
   constructor(viewport: Viewport) {
     this.viewport = viewport;
+  }
+
+  getPosition() {
+    return this.position;
+  }
+
+  setPosition(x: number, y: number, z: number) {
+    this.position = { x, y, z };
+    this.viewMatrix = null;
   }
 
   getViewMatrix() {
