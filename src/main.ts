@@ -61,7 +61,9 @@ sceneA.addCamera(
   })
 );
 
-const entityA = new Entity(new SpriteComponent({ color: 'red' }));
+const entityA = new Entity();
+
+entityA.addComponent(new SpriteComponent({ color: 'red' }));
 
 entityA.transform.position.x = 60;
 entityA.transform.position.y = 60;
@@ -80,12 +82,16 @@ sceneB.addCamera(
   })
 );
 
-const entityB = new Entity(new SpriteComponent({ color: 'blue' }));
+const entityB = new Entity();
+
+entityB.addComponent(new SpriteComponent({ color: 'blue' }));
 
 entityB.transform.position.x = 60;
 entityB.transform.position.y = 60;
 
-const entityBChild = new Entity(new SpriteComponent({ width: 20, height: 20, color: 'red' }));
+const entityBChild = new Entity();
+
+entityBChild.addComponent(new SpriteComponent({ width: 20, height: 20, color: 'red' }));
 
 entityBChild.transform.position.x = 20;
 entityBChild.transform.position.y = 20;

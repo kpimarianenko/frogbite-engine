@@ -1,6 +1,7 @@
+import type { Component, ComponentConstructor } from '@/components';
 import type { System } from '@/core/system';
 import type { Camera } from './camera';
-import type { Entity } from './entity';
+import { Entity } from './entity';
 
 export class Scene {
   entities: Entity[] = [];
@@ -34,23 +35,25 @@ export class Scene {
   }
 
   getRootEntities() {
-    return this.query(entity => !entity.parent);
+    return this.entities.filter(entity => !entity.parent);
   }
 
-  query(predicate: (entity: Entity) => boolean): Entity[] {
+  // TODO: Redesign query system. Maybe add some kind of indexing for better performance?
+  query<T extends Component[]>(...types: { [K in keyof T]: ComponentConstructor<T[K]> }): Entity[] {
     const result: Entity[] = [];
-    const stack: Entity[] = [...this.entities];
 
-    while (stack.length > 0) {
-      const entity = stack.pop()!;
-
-      if (predicate(entity)) {
+    const visit = (entity: Entity) => {
+      if (types.every(type => entity.hasComponent(type))) {
         result.push(entity);
       }
 
-      if (entity.children?.length) {
-        stack.push(...entity.children);
+      for (const child of entity.children) {
+        visit(child);
       }
+    };
+
+    for (const root of this.getRootEntities()) {
+      visit(root);
     }
 
     return result;

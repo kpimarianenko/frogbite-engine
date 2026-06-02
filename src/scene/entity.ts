@@ -1,8 +1,8 @@
-import { defaultTransform, type RenderComponent } from '@/components';
+import { Component, type ComponentConstructor, defaultTransform } from '@/components';
 import { Matrix4x4 } from '@/math';
 
 export class Entity {
-  id: string = crypto.randomUUID();
+  readonly id: string = crypto.randomUUID();
   transform = defaultTransform();
 
   localMatrix: Matrix4x4 = Matrix4x4.identity();
@@ -11,13 +11,10 @@ export class Entity {
   parent: Entity | null = null;
   children: Entity[] = [];
 
-  render: RenderComponent | null = null;
   visible = true;
   protected dirty = true;
 
-  constructor(render: RenderComponent | null = null) {
-    this.render = render;
-  }
+  private components = new Map<ComponentConstructor, Component>();
 
   addChild(child: Entity) {
     child.parent = this;
@@ -31,6 +28,23 @@ export class Entity {
       child.parent = null;
       this.children.splice(index, 1);
     }
+  }
+
+  addComponent(component: Component) {
+    component.entity = this;
+    this.components.set(component.constructor as new (...args: unknown[]) => Component, component);
+  }
+
+  getComponent<T extends Component>(type: ComponentConstructor<T>): T | null {
+    return (this.components.get(type) as T) ?? null;
+  }
+
+  hasComponent<T extends Component>(type: ComponentConstructor<T>): boolean {
+    return this.components.has(type);
+  }
+
+  removeComponent<T extends Component>(type: ComponentConstructor<T>): void {
+    this.components.delete(type);
   }
 
   updateLocalMatrix() {
