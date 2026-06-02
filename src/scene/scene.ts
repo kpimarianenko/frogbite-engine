@@ -27,7 +27,7 @@ export class Scene {
   }
 
   removeEntity(entity: Entity) {
-    const index = this.entities.findIndex(e => e.id === entity.id);
+    const index = this.entities.indexOf(entity);
 
     if (index >= 0) {
       this.entities.splice(index, 1);
@@ -35,7 +35,7 @@ export class Scene {
   }
 
   removeCamera(camera: Camera) {
-    const index = this.cameras.findIndex(c => c === camera);
+    const index = this.cameras.indexOf(camera);
 
     if (index >= 0) {
       this.cameras.splice(index, 1);
@@ -43,7 +43,7 @@ export class Scene {
   }
 
   removeSystem(system: System) {
-    const index = this.systems.findIndex(s => s === system);
+    const index = this.systems.indexOf(system);
 
     if (index >= 0) {
       this.systems.splice(index, 1);
