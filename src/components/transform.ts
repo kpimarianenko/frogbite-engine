@@ -1,7 +1,7 @@
 import type { Vector3D } from '@/math';
 import { Component } from './component';
 
-type TransformComponentOptions = {
+export type TransformComponentOptions = {
   position?: Vector3D;
   rotation?: Vector3D;
   scale?: Vector3D;

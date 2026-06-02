@@ -41,6 +41,7 @@ export default tseslint.config(
     rules: {
       'prettier/prettier': 'error',
       'no-console': 'warn',
+      curly: ['error', 'all'],
       '@typescript-eslint/no-magic-numbers': [
         'warn',
         {

@@ -1,6 +1,6 @@
 import { Component } from './component';
 
-type SpriteComponentOptions = {
+export type SpriteComponentOptions = {
   width?: number;
   height?: number;
   color?: string;

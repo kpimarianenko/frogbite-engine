@@ -116,7 +116,9 @@ export class Entity {
   }
 
   markAsDirty() {
-    if (this.dirty) return;
+    if (this.dirty) {
+      return;
+    }
 
     this.dirty = true;
 

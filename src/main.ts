@@ -1,12 +1,13 @@
 import './reset.css';
 import { SpriteComponent } from '@/components';
-import { Engine } from '@/core/engine';
+import { FrogbiteEngine } from '@/core/engine';
 import { InputManager } from '@/core/input';
 import type { System, SystemContext } from '@/core/system';
 import { CanvasRenderer, handleRendererResize } from '@/render';
 import { Entity, OrthographicCamera, Scene } from '@/scene';
 import { AssetManager } from './core/asset-manager';
 import { half } from './math';
+import { FrogbitePhysicsEngine } from './physics';
 
 class MovementSystem implements System {
   readonly id: string = crypto.randomUUID();
@@ -54,7 +55,8 @@ const main = async () => {
   scene.addCamera(camera);
   scene.addSystem(new MovementSystem());
 
-  const engine = new Engine(renderer, input);
+  const physics = new FrogbitePhysicsEngine();
+  const engine = new FrogbiteEngine(renderer, input, physics);
 
   handleRendererResize(renderer, () => ({
     width: window.innerWidth,
