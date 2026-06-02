@@ -1,9 +1,9 @@
-import { Component, type ComponentConstructor, defaultTransform } from '@/components';
+import { Component, type ComponentConstructor, TransformComponent } from '@/components';
 import { Matrix4x4 } from '@/math';
 
 export class Entity {
   readonly id: string = crypto.randomUUID();
-  transform = defaultTransform();
+  readonly transform: TransformComponent;
 
   localMatrix: Matrix4x4 = Matrix4x4.identity();
   worldMatrix: Matrix4x4 = Matrix4x4.identity();
@@ -15,6 +15,11 @@ export class Entity {
   protected dirty = true;
 
   private components = new Map<ComponentConstructor, Component>();
+
+  constructor() {
+    this.transform = new TransformComponent();
+    this.addComponent(this.transform);
+  }
 
   addChild(child: Entity) {
     child.parent = this;

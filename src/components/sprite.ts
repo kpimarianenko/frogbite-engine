@@ -1,6 +1,6 @@
 import { Component } from './component';
 
-type SpriteComponentAttributes = {
+type SpriteComponentOptions = {
   width?: number;
   height?: number;
   color?: string;
@@ -11,9 +11,9 @@ export class SpriteComponent extends Component {
   height: number;
   color: string; // TODO: Remove color, add texture
 
-  constructor(attrs: SpriteComponentAttributes = {}) {
+  constructor(options: SpriteComponentOptions = {}) {
     super();
-    const { width = 50, height = 50, color = '#000' } = attrs;
+    const { width = 50, height = 50, color = '#000' } = options;
 
     this.width = width;
     this.height = height;

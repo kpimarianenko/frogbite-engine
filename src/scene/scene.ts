@@ -35,7 +35,7 @@ export class Scene {
   }
 
   getRootEntities() {
-    return this.entities.filter(entity => !entity.parent);
+    return this.entities;
   }
 
   // TODO: Redesign query system. Maybe add some kind of indexing for better performance?
