@@ -45,7 +45,20 @@ const main = async () => {
   });
 
   const scene = new Scene();
-  const camera = new OrthographicCamera();
+  const cameraA = new OrthographicCamera({
+    x: 0,
+    y: 0,
+    width: 0.5,
+    height: 1,
+    normalized: true,
+  });
+  const cameraB = new OrthographicCamera({
+    x: 0.5,
+    y: 0,
+    width: 0.5,
+    height: 1,
+    normalized: true,
+  });
   const entity = new Entity();
 
   entity.addComponent(new SpriteComponent({ width: 1.6, height: 1.6, texture: 'player' }));
@@ -60,7 +73,8 @@ const main = async () => {
     })
   );
   scene.addEntity(entity);
-  scene.addCamera(camera);
+  scene.addCamera(cameraA);
+  scene.addCamera(cameraB);
   scene.addSystem(new MovementSystem());
 
   const physics = new FrogbitePhysicsEngine();

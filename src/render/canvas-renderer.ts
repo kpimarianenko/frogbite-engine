@@ -60,13 +60,16 @@ export class CanvasRenderer implements Renderer {
     const { mvMatrix: m, viewport } = command;
     const { x: vpX, y: vpY, width: vpWidth, height: vpHeight } = this.resolveViewport(viewport);
 
+    const cx = vpX + half(vpWidth);
+    const cy = vpY + half(vpHeight);
+
     this.ctx.save();
     this.ctx.beginPath();
     this.ctx.rect(vpX, vpY, vpWidth, vpHeight);
     this.ctx.clip();
 
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    this.ctx.setTransform(m[0], m[1], m[4], m[5], m[12] + vpX, m[13] + vpY);
+    this.ctx.setTransform(m[0], m[1], m[4], m[5], m[12] + cx, m[13] + cy);
 
     if (command.texture) {
       const img = this.assets.get(command.texture);
@@ -104,6 +107,6 @@ export class CanvasRenderer implements Renderer {
           width: this.canvas.width * viewport.width,
           height: this.canvas.height * viewport.height,
         }
-      : { x: viewport.x, y: viewport.y, width: viewport.width, height: viewport.height };
+      : viewport;
   }
 }
