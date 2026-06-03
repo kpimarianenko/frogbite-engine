@@ -6,12 +6,11 @@ import type { System, SystemContext } from '@/core/system';
 import { CanvasRenderer, handleRendererResize } from '@/render';
 import { Entity, OrthographicCamera, Scene } from '@/scene';
 import { AssetManager } from './core/asset-manager';
-import { half } from './math';
 import { FrogbitePhysicsEngine, ShapeType } from './physics';
 
 class MovementSystem implements System {
   readonly id: string = crypto.randomUUID();
-  private v = 500;
+  private v = 5;
 
   update({ scene, input, dt }: SystemContext): void {
     for (const entity of scene.entities) {
@@ -49,18 +48,17 @@ const main = async () => {
   const camera = new OrthographicCamera();
   const entity = new Entity();
 
-  entity.addComponent(new SpriteComponent({ width: 160, height: 160, texture: 'player' }));
+  entity.addComponent(new SpriteComponent({ width: 1.6, height: 1.6, texture: 'player' }));
   entity.addComponent(
     new RigidBodyComponent({
       shape: {
         type: ShapeType.Box,
-        width: 160,
-        height: 160,
+        width: 1.6,
+        height: 1.6,
         depth: 0,
       },
     })
   );
-  entity.setPosition(half(window.innerWidth), half(window.innerHeight), 0);
   scene.addEntity(entity);
   scene.addCamera(camera);
   scene.addSystem(new MovementSystem());

@@ -30,6 +30,7 @@ export class OrthographicCamera implements BaseCamera {
   private position: Vector3D = { x: 0, y: 0, z: 0 };
   private rotation = 0;
   private zoom = 1;
+  private pixelsPerUnit = 100; // TODO: Should probably be calculated based on screen dimensions
 
   private viewMatrix: Float32Array | null = null;
   private projectionMatrix: Float32Array | null = null;
@@ -67,9 +68,10 @@ export class OrthographicCamera implements BaseCamera {
 
   getViewMatrix() {
     if (!this.viewMatrix) {
+      const scale = this.pixelsPerUnit * this.zoom;
       const t = Matrix4x4.translation(-this.position.x, -this.position.y, -this.position.z);
       const r = Matrix4x4.rotationZ(-this.rotation);
-      const s = Matrix4x4.scale(this.zoom, this.zoom, 1);
+      const s = Matrix4x4.scale(scale, scale, 1);
 
       this.viewMatrix = Matrix4x4.multiply(s, Matrix4x4.multiply(r, t)).data;
     }
