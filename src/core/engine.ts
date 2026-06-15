@@ -22,6 +22,7 @@ export class FrogbiteEngine {
 
   private readonly TICK_RATE = 60;
   private readonly TICK_TIME_STEP = 1 / this.TICK_RATE;
+  private readonly MAX_DT = 0.1;
 
   constructor(renderer: Renderer, input: InputManager, physics: PhysicsEngine | null = null) {
     this.renderer = renderer;
@@ -30,7 +31,10 @@ export class FrogbiteEngine {
   }
 
   start() {
-    requestAnimationFrame(this.loop);
+    requestAnimationFrame(t => {
+      this.lastTime = t;
+      requestAnimationFrame(this.loop);
+    });
   }
 
   update(dt: number) {
@@ -80,7 +84,7 @@ export class FrogbiteEngine {
   }
 
   private loop = (t: number) => {
-    const dt = (t - this.lastTime) / MILLIS_IN_SECOND;
+    const dt = Math.min((t - this.lastTime) / MILLIS_IN_SECOND, this.MAX_DT);
 
     this.lastTime = t;
     this.tickAccumulator += dt;

@@ -124,5 +124,13 @@ export class Matrix4x4 {
 
     return m;
   }
+
+  getTranslation() {
+    return {
+      x: this.data[12],
+      y: this.data[13],
+      z: this.data[14],
+    };
+  }
 }
 /* eslint-enable @typescript-eslint/no-magic-numbers */

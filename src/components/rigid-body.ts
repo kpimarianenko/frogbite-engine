@@ -17,6 +17,7 @@ export class RigidBodyComponent extends Component {
   restitution: number;
   friction: number;
   isStatic: boolean;
+  isGrounded = false;
   mode: '2d' | '3d';
 
   velocity: Vector3D = { x: 0, y: 0, z: 0 };
