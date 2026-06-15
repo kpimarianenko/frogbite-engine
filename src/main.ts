@@ -45,24 +45,12 @@ const main = async () => {
   });
 
   const scene = new Scene();
-  const cameraA = new OrthographicCamera({
-    x: 0,
-    y: 0,
-    width: 0.5,
-    height: 1,
-    normalized: true,
-  });
-  const cameraB = new OrthographicCamera({
-    x: 0.5,
-    y: 0,
-    width: 0.5,
-    height: 1,
-    normalized: true,
-  });
-  const entity = new Entity();
+  const camera = new OrthographicCamera();
+  const player = new Entity();
+  const tile = new Entity();
 
-  entity.addComponent(new SpriteComponent({ width: 1.6, height: 1.6, texture: 'player' }));
-  entity.addComponent(
+  player.addComponent(new SpriteComponent({ width: 1.6, height: 1.6, texture: 'player' }));
+  player.addComponent(
     new RigidBodyComponent({
       shape: {
         type: ShapeType.Box,
@@ -72,9 +60,25 @@ const main = async () => {
       },
     })
   );
-  scene.addEntity(entity);
-  scene.addCamera(cameraA);
-  scene.addCamera(cameraB);
+  player.setPosition(0, -1, 0);
+
+  tile.addComponent(new SpriteComponent({ width: 1, height: 1, texture: 'tile' }));
+  tile.addComponent(
+    new RigidBodyComponent({
+      isStatic: true,
+      shape: {
+        type: ShapeType.Box,
+        width: 1,
+        height: 1,
+        depth: 0,
+      },
+    })
+  );
+  tile.setPosition(0, 1, 0);
+
+  scene.addEntity(player);
+  scene.addEntity(tile);
+  scene.addCamera(camera);
   scene.addSystem(new MovementSystem());
 
   const physics = new FrogbitePhysicsEngine();
