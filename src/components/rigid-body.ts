@@ -29,7 +29,7 @@ export class RigidBodyComponent extends Component {
     const {
       shape,
       mass = 1,
-      restitution = 0.5,
+      restitution = 0,
       friction = 0.1,
       isStatic = false,
       mode = '2d',

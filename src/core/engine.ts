@@ -71,8 +71,6 @@ export class FrogbiteEngine {
     this.renderer.clear();
 
     for (const scene of this.scenes) {
-      scene.update();
-
       for (const camera of scene.cameras) {
         this.renderer.render(this.renderPipeline.build(scene, camera));
       }

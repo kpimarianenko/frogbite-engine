@@ -27,11 +27,30 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
   }
 
   step(bodies: Entity[], dt: number) {
-    this.integrate(bodies, dt);
+    const groundedLastStep = new Set<RigidBodyComponent>();
+
+    for (const entity of bodies) {
+      const body = entity.getComponent(RigidBodyComponent)!;
+
+      if (body.isGrounded) {
+        groundedLastStep.add(body);
+      }
+
+      body.isGrounded = false;
+    }
+
+    this.integrate(bodies, dt, groundedLastStep);
+    this.updateBodiesWorldTransforms(bodies);
     this.detectCollisions(bodies);
   }
 
-  private integrate(bodies: Entity[], dt: number) {
+  private updateBodiesWorldTransforms(bodies: Entity[]) {
+    for (const entity of bodies) {
+      entity.updateWorldTransform();
+    }
+  }
+
+  private integrate(bodies: Entity[], dt: number, groundedBodies: Set<RigidBodyComponent>) {
     for (const entity of bodies) {
       const body = entity.getComponent(RigidBodyComponent)!;
 
@@ -39,9 +58,11 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
         continue;
       }
 
-      body.acceleration.x = body.force.x / body.mass + this.gravity.x;
-      body.acceleration.y = body.force.y / body.mass + this.gravity.y;
-      body.acceleration.z = body.force.z / body.mass + this.gravity.z;
+      const gravity = groundedBodies.has(body) ? { x: 0, y: 0, z: 0 } : this.gravity;
+
+      body.acceleration.x = body.force.x / body.mass + gravity.x;
+      body.acceleration.y = body.force.y / body.mass + gravity.y;
+      body.acceleration.z = body.force.z / body.mass + gravity.z;
 
       body.velocity.x += body.acceleration.x * dt;
       body.velocity.y += body.acceleration.y * dt;
@@ -148,19 +169,19 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
     bodyB: RigidBodyComponent,
     normal: Vector3D
   ) {
-    if (bodyB.isStatic && normal.y > this.GROUNDED_NORMAL_THRESHOLD) {
+    if (bodyB.isStatic && normal.y < -this.GROUNDED_NORMAL_THRESHOLD) {
       bodyA.isGrounded = true;
     }
 
-    if (bodyA.isStatic && normal.y < -this.GROUNDED_NORMAL_THRESHOLD) {
+    if (bodyA.isStatic && normal.y > this.GROUNDED_NORMAL_THRESHOLD) {
       bodyB.isGrounded = true;
     }
   }
 
   private applyImpulse(bodyA: RigidBodyComponent, bodyB: RigidBodyComponent, normal: Vector3D) {
     const relativeVelocity = {
-      x: bodyB.velocity.x - bodyA.velocity.x,
-      y: bodyB.velocity.y - bodyA.velocity.y,
+      x: bodyA.velocity.x - bodyB.velocity.x,
+      y: bodyA.velocity.y - bodyB.velocity.y,
     };
 
     const velocityAlongNormal = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
@@ -175,8 +196,8 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
     const impulseMagnitude = (-(1 + restitution) * velocityAlongNormal) / (invMassA + invMassB);
 
     if (!bodyA.isStatic) {
-      bodyA.velocity.x -= impulseMagnitude * invMassA * normal.x;
-      bodyA.velocity.y -= impulseMagnitude * invMassA * normal.y;
+      bodyA.velocity.x += impulseMagnitude * invMassA * normal.x;
+      bodyA.velocity.y += impulseMagnitude * invMassA * normal.y;
 
       if (bodyB.isStatic) {
         this.clampVelocityAlongNormal(bodyA, normal);
@@ -184,8 +205,8 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
     }
 
     if (!bodyB.isStatic) {
-      bodyB.velocity.x += impulseMagnitude * invMassB * normal.x;
-      bodyB.velocity.y += impulseMagnitude * invMassB * normal.y;
+      bodyB.velocity.x -= impulseMagnitude * invMassB * normal.x;
+      bodyB.velocity.y -= impulseMagnitude * invMassB * normal.y;
 
       if (bodyA.isStatic) {
         this.clampVelocityAlongNormal(bodyB, normal);
