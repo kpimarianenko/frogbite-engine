@@ -21,17 +21,28 @@ export class Entity {
   }
 
   addChild(child: Entity) {
+    if (child === this || this.hasAncestor(child)) {
+      throw new Error('Entity hierarchy cannot contain cycles');
+    }
+
+    if (child.parent) {
+      child.parent.removeChild(child);
+    }
+
     child.parent = this;
     this.children.push(child);
+    child.markAsDirty();
   }
 
   removeChild(child: Entity) {
     const index = this.children.indexOf(child);
 
-    if (index >= 0) {
-      child.parent = null;
-      this.children.splice(index, 1);
+    if (index < 0) {
+      return;
     }
+
+    this.children.splice(index, 1);
+    child.parent = null;
   }
 
   addComponent(component: Component) {
@@ -125,5 +136,28 @@ export class Entity {
     for (const child of this.children) {
       child.markAsDirty();
     }
+  }
+
+  destroy() {
+    for (const child of [...this.children]) {
+      child.destroy();
+    }
+
+    this.children.length = 0;
+    this.components.clear();
+  }
+
+  private hasAncestor(entity: Entity) {
+    let current = this.parent;
+
+    while (current) {
+      if (current === entity) {
+        return true;
+      }
+
+      current = current.parent;
+    }
+
+    return false;
   }
 }

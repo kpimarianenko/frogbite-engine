@@ -8,7 +8,14 @@ export class Scene {
   cameras: Camera[] = [];
   systems: System[] = [];
 
-  addEntity(entity: Entity) {
+  private pendingRemovals = new Set<Entity>();
+
+  addChild(entity: Entity) {
+    // TODO: Should check if entity already belongs to this or another scene
+    if (entity.parent) {
+      throw new Error('Cannot add a child entity directly to a Scene');
+    }
+
     this.entities.push(entity);
   }
 
@@ -21,11 +28,31 @@ export class Scene {
   }
 
   removeEntity(entity: Entity) {
-    const index = this.entities.indexOf(entity);
+    this.pendingRemovals.add(entity);
+  }
 
-    if (index >= 0) {
-      this.entities.splice(index, 1);
+  flushRemovals() {
+    for (const entity of this.pendingRemovals) {
+      if (this.hasPendingAncestor(entity)) {
+        continue;
+      }
+
+      const parent = entity.parent;
+
+      if (parent) {
+        parent.removeChild(entity);
+      } else {
+        const index = this.entities.indexOf(entity);
+
+        if (index >= 0) {
+          this.entities.splice(index, 1);
+        }
+      }
+
+      entity.destroy();
     }
+
+    this.pendingRemovals.clear();
   }
 
   removeCamera(camera: Camera) {
@@ -72,4 +99,18 @@ export class Scene {
   onEnter?(): void;
 
   onExit?(): void;
+
+  private hasPendingAncestor(entity: Entity) {
+    let current = entity.parent;
+
+    while (current) {
+      if (this.pendingRemovals.has(current)) {
+        return true;
+      }
+
+      current = current.parent;
+    }
+
+    return false;
+  }
 }

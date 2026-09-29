@@ -94,6 +94,11 @@ export class FrogbiteEngine {
     }
 
     this.update(dt);
+
+    for (const scene of this.scenes) {
+      scene.flushRemovals();
+    }
+
     this.render();
     requestAnimationFrame(this.loop);
   };

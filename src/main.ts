@@ -41,6 +41,7 @@ const main = async () => {
 
   await assets.loadAll({
     player: '/assets/player.png',
+    hat: '/assets/hat.png',
     box: '/assets/box.png',
     grass: '/assets/grass.png',
   });
@@ -51,10 +52,11 @@ const main = async () => {
   const heavyBox = new Entity();
   const floor = new Entity();
 
-  floor.addComponent(new SpriteComponent({ width: 100, height: 1, texture: 'grass' }));
+  floor.addComponent(new SpriteComponent({ width: 20, height: 1, texture: 'grass' }));
   floor.addComponent(
     new RigidBodyComponent({
       isStatic: true,
+      restitution: 0.8,
       shape: {
         type: ShapeType.Box,
         width: 100,
@@ -85,6 +87,7 @@ const main = async () => {
     new RigidBodyComponent({
       mass: 2,
       friction: 0.1,
+      restitution: 0.5,
       shape: {
         type: ShapeType.Box,
         width: 1,
@@ -95,14 +98,20 @@ const main = async () => {
   );
   heavyBox.setPosition(1, -1, 0);
 
+  const hat = new Entity();
+
+  hat.addComponent(new SpriteComponent({ width: 1, height: 1, texture: 'hat' }));
+  hat.setPosition(0, -1, 0);
+  lightBox.addChild(hat);
+
   const impulse = 3;
 
   lightBox.getComponent(RigidBodyComponent)?.applyImpulse(-impulse, 0, 0);
   heavyBox.getComponent(RigidBodyComponent)?.applyImpulse(impulse, 0, 0);
 
-  scene.addEntity(lightBox);
-  scene.addEntity(heavyBox);
-  scene.addEntity(floor);
+  scene.addChild(lightBox);
+  scene.addChild(heavyBox);
+  scene.addChild(floor);
 
   scene.addCamera(camera);
   scene.addSystem(new MovementSystem());
