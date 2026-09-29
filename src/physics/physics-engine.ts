@@ -168,6 +168,7 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
     const relativeVelocity = {
       x: bodyA.velocity.x - bodyB.velocity.x,
       y: bodyA.velocity.y - bodyB.velocity.y,
+      z: 0,
     };
 
     const velocityAlongNormal = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
@@ -184,28 +185,66 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
     if (!bodyA.isStatic) {
       bodyA.velocity.x += impulseMagnitude * invMassA * normal.x;
       bodyA.velocity.y += impulseMagnitude * invMassA * normal.y;
-
-      if (bodyB.isStatic) {
-        this.clampVelocityAlongNormal(bodyA, normal);
-      }
     }
 
     if (!bodyB.isStatic) {
       bodyB.velocity.x -= impulseMagnitude * invMassB * normal.x;
       bodyB.velocity.y -= impulseMagnitude * invMassB * normal.y;
-
-      if (bodyA.isStatic) {
-        this.clampVelocityAlongNormal(bodyB, normal);
-      }
     }
+
+    this.applyFriction(
+      bodyA,
+      bodyB,
+      relativeVelocity,
+      normal,
+      invMassA,
+      invMassB,
+      impulseMagnitude
+    );
   }
 
-  private clampVelocityAlongNormal(body: RigidBodyComponent, normal: Vector3D) {
-    const dot = body.velocity.x * normal.x + body.velocity.y * normal.y;
+  private applyFriction(
+    bodyA: RigidBodyComponent,
+    bodyB: RigidBodyComponent,
+    relativeVelocity: Vector3D,
+    normal: Vector3D,
+    invMassA: number,
+    invMassB: number,
+    normalImpulseMagnitude: number
+  ) {
+    const normalVelocity = relativeVelocity.x * normal.x + relativeVelocity.y * normal.y;
 
-    if (dot < 0) {
-      body.velocity.x -= dot * normal.x;
-      body.velocity.y -= dot * normal.y;
+    const tangent = {
+      x: relativeVelocity.x - normalVelocity * normal.x,
+      y: relativeVelocity.y - normalVelocity * normal.y,
+    };
+
+    const tangentLength = Math.hypot(tangent.x, tangent.y);
+
+    if (!tangentLength) {
+      return;
+    }
+
+    tangent.x /= tangentLength;
+    tangent.y /= tangentLength;
+
+    const velocityAlongTangent = relativeVelocity.x * tangent.x + relativeVelocity.y * tangent.y;
+    const frictionImpulse = -velocityAlongTangent / (invMassA + invMassB);
+    const friction = Math.sqrt(bodyA.friction * bodyB.friction);
+
+    const clampedImpulse = Math.max(
+      -normalImpulseMagnitude * friction,
+      Math.min(frictionImpulse, normalImpulseMagnitude * friction)
+    );
+
+    if (!bodyA.isStatic) {
+      bodyA.velocity.x += clampedImpulse * invMassA * tangent.x;
+      bodyA.velocity.y += clampedImpulse * invMassA * tangent.y;
+    }
+
+    if (!bodyB.isStatic) {
+      bodyB.velocity.x -= clampedImpulse * invMassB * tangent.x;
+      bodyB.velocity.y -= clampedImpulse * invMassB * tangent.y;
     }
   }
 }

@@ -41,31 +41,35 @@ const main = async () => {
 
   await assets.loadAll({
     player: '/assets/player.png',
-    tile: '/assets/tile.png',
+    box: '/assets/box.png',
+    grass: '/assets/grass.png',
   });
 
   const scene = new Scene();
   const camera = new OrthographicCamera();
-  const player = new Entity();
-  const tile = new Entity();
+  const lightBox = new Entity();
+  const heavyBox = new Entity();
+  const floor = new Entity();
 
-  player.addComponent(new SpriteComponent({ width: 1.6, height: 1.6, texture: 'player' }));
-  player.addComponent(
+  floor.addComponent(new SpriteComponent({ width: 100, height: 1, texture: 'grass' }));
+  floor.addComponent(
     new RigidBodyComponent({
+      isStatic: true,
       shape: {
         type: ShapeType.Box,
-        width: 1.6,
-        height: 1.6,
+        width: 100,
+        height: 1,
         depth: 0,
       },
     })
   );
-  player.setPosition(0, -1, 0);
+  floor.setPosition(0, 1, 0);
 
-  tile.addComponent(new SpriteComponent({ width: 1, height: 1, texture: 'tile' }));
-  tile.addComponent(
+  lightBox.addComponent(new SpriteComponent({ width: 1, height: 1, texture: 'box' }));
+  lightBox.addComponent(
     new RigidBodyComponent({
-      isStatic: true,
+      mass: 1,
+      friction: 0.5,
       shape: {
         type: ShapeType.Box,
         width: 1,
@@ -74,10 +78,32 @@ const main = async () => {
       },
     })
   );
-  tile.setPosition(0, 1, 0);
+  lightBox.setPosition(-1, -1, 0);
 
-  scene.addEntity(player);
-  scene.addEntity(tile);
+  heavyBox.addComponent(new SpriteComponent({ width: 1, height: 1, texture: 'box' }));
+  heavyBox.addComponent(
+    new RigidBodyComponent({
+      mass: 2,
+      friction: 0.1,
+      shape: {
+        type: ShapeType.Box,
+        width: 1,
+        height: 1,
+        depth: 0,
+      },
+    })
+  );
+  heavyBox.setPosition(1, -1, 0);
+
+  const impulse = 3;
+
+  lightBox.getComponent(RigidBodyComponent)?.applyImpulse(-impulse, 0, 0);
+  heavyBox.getComponent(RigidBodyComponent)?.applyImpulse(impulse, 0, 0);
+
+  scene.addEntity(lightBox);
+  scene.addEntity(heavyBox);
+  scene.addEntity(floor);
+
   scene.addCamera(camera);
   scene.addSystem(new MovementSystem());
 
