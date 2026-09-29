@@ -27,19 +27,7 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
   }
 
   step(bodies: Entity[], dt: number) {
-    const groundedLastStep = new Set<RigidBodyComponent>();
-
-    for (const entity of bodies) {
-      const body = entity.getComponent(RigidBodyComponent)!;
-
-      if (body.isGrounded) {
-        groundedLastStep.add(body);
-      }
-
-      body.isGrounded = false;
-    }
-
-    this.integrate(bodies, dt, groundedLastStep);
+    this.integrate(bodies, dt);
     this.updateBodiesWorldTransforms(bodies);
     this.detectCollisions(bodies);
   }
@@ -50,7 +38,7 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
     }
   }
 
-  private integrate(bodies: Entity[], dt: number, groundedBodies: Set<RigidBodyComponent>) {
+  private integrate(bodies: Entity[], dt: number) {
     for (const entity of bodies) {
       const body = entity.getComponent(RigidBodyComponent)!;
 
@@ -58,11 +46,9 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
         continue;
       }
 
-      const gravity = groundedBodies.has(body) ? { x: 0, y: 0, z: 0 } : this.gravity;
-
-      body.acceleration.x = body.force.x / body.mass + gravity.x;
-      body.acceleration.y = body.force.y / body.mass + gravity.y;
-      body.acceleration.z = body.force.z / body.mass + gravity.z;
+      body.acceleration.x = body.force.x / body.mass + this.gravity.x;
+      body.acceleration.y = body.force.y / body.mass + this.gravity.y;
+      body.acceleration.z = body.force.z / body.mass + this.gravity.z;
 
       body.velocity.x += body.acceleration.x * dt;
       body.velocity.y += body.acceleration.y * dt;

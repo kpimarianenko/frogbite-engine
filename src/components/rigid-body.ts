@@ -24,6 +24,8 @@ export class RigidBodyComponent extends Component {
   acceleration: Vector3D = { x: 0, y: 0, z: 0 };
   force: Vector3D = { x: 0, y: 0, z: 0 };
 
+  // TODO: Should add inverse mass getter?
+
   constructor(options: RigidBodyOptions) {
     super();
     const {
@@ -34,6 +36,10 @@ export class RigidBodyComponent extends Component {
       isStatic = false,
       mode = '2d',
     } = options;
+
+    if (!isStatic && mass <= 0) {
+      throw new Error('Dynamic rigid body mass must be greater than zero');
+    }
 
     this.shape = shape;
     this.mass = mass;
