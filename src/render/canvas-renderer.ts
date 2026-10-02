@@ -71,7 +71,24 @@ export class CanvasRenderer implements Renderer {
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     this.ctx.setTransform(m[0], m[1], m[4], m[5], m[12] + cx, m[13] + cy);
 
-    if (command.texture) {
+    if (command.animation) {
+      const img = this.assets.get('walk')!;
+      const columns = Math.floor(img.width / command.animation.frameWidth);
+      const sourceX = (command.animation.frame % columns) * command.animation.frameWidth;
+      const sourceY = Math.floor(command.animation.frame / columns) * command.animation.frameHeight;
+
+      this.ctx.drawImage(
+        img,
+        sourceX,
+        sourceY,
+        command.animation.frameWidth,
+        command.animation.frameHeight,
+        -half(command.width),
+        -half(command.height),
+        command.width,
+        command.height
+      );
+    } else if (command.texture) {
       const img = this.assets.get(command.texture);
 
       if (img) {

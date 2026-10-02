@@ -16,6 +16,11 @@ export type SpriteRenderCommand = BaseRenderCommand & {
   height: number;
   color: string;
   texture: string | null;
+  animation: {
+    frame: number;
+    frameWidth: number;
+    frameHeight: number;
+  } | null;
 };
 
 export type MeshRenderCommand = BaseRenderCommand & {

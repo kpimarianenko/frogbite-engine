@@ -44,6 +44,7 @@ const main = async () => {
     hat: '/assets/hat.png',
     box: '/assets/box.png',
     grass: '/assets/grass.png',
+    walk: '/assets/walk.png',
   });
 
   const scene = new Scene();
@@ -82,7 +83,26 @@ const main = async () => {
   );
   lightBox.setPosition(-1, -1, 0);
 
-  heavyBox.addComponent(new SpriteComponent({ width: 1, height: 1, texture: 'box' }));
+  heavyBox.addComponent(
+    new SpriteComponent({
+      width: 1,
+      height: 1,
+      texture: 'walk',
+      animation: {
+        current: 'walk',
+        frameWidth: 32,
+        frameHeight: 32,
+        sequences: {
+          walk: {
+            texture: 'walk',
+            frameCount: 6,
+            fps: 12,
+            loop: true,
+          },
+        },
+      },
+    })
+  );
   heavyBox.addComponent(
     new RigidBodyComponent({
       mass: 2,
