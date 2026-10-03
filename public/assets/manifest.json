@@ -10,5 +10,8 @@
     "box": "/assets/prefabs/box.json",
     "floor": "/assets/prefabs/floor.json",
     "player": "/assets/prefabs/player.json"
+  },
+  "audio": {
+    "hit": "/assets/audio/hit.wav"
   }
 }

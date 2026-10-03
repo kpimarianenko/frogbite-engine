@@ -3,6 +3,7 @@ import type { EntityPrefab } from '@/scene/prefab';
 interface AssetManifest {
   textures?: Record<string, string>;
   prefabs?: Record<string, string>;
+  audio?: Record<string, string>;
 }
 
 class AssetStore<T> {
@@ -55,9 +56,12 @@ class AssetStore<T> {
 export class AssetManager {
   private textures = new AssetStore<HTMLImageElement>();
   private prefabs = new AssetStore<EntityPrefab>();
+  private audio = new AssetStore<AudioBuffer>();
 
   private manifestPath: string;
   private manifest: AssetManifest | null;
+
+  private readonly audioContext = new AudioContext();
 
   constructor(manifestPath: string) {
     this.manifestPath = manifestPath;
@@ -67,7 +71,7 @@ export class AssetManager {
   async load() {
     await this.loadManifest();
 
-    await Promise.all([this.loadTextures(), this.loadPrefabs()]);
+    await Promise.all([this.loadAllTextures(), this.loadAllPrefabs(), this.loadAllAudio()]);
   }
 
   async loadManifest() {
@@ -80,15 +84,21 @@ export class AssetManager {
     this.manifest = (await response.json()) as AssetManifest;
   }
 
-  async loadTextures() {
+  async loadAllTextures() {
     await Promise.all(
       Object.entries(this.manifest?.textures ?? {}).map(([key, url]) => this.loadTexture(key, url))
     );
   }
 
-  async loadPrefabs() {
+  async loadAllPrefabs() {
     await Promise.all(
       Object.entries(this.manifest?.prefabs ?? {}).map(([key, url]) => this.loadPrefab(key, url))
+    );
+  }
+
+  async loadAllAudio() {
+    await Promise.all(
+      Object.entries(this.manifest?.audio ?? {}).map(([key, url]) => this.loadAudio(key, url))
     );
   }
 
@@ -121,6 +131,20 @@ export class AssetManager {
     });
   }
 
+  async loadAudio(key: string, path: string) {
+    return this.audio.load(key, async () => {
+      const response = await fetch(path);
+
+      if (!response.ok) {
+        throw new Error(`Failed to load audio: ${path}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+
+      return this.audioContext.decodeAudioData(arrayBuffer);
+    });
+  }
+
   getTexture(key: string) {
     const texture = this.textures.get(key);
 
@@ -139,5 +163,15 @@ export class AssetManager {
     }
 
     return prefab;
+  }
+
+  getAudio(key: string) {
+    const audio = this.audio.get(key);
+
+    if (!audio) {
+      throw new Error(`audio not found: ${key}`);
+    }
+
+    return audio;
   }
 }
