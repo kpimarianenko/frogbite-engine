@@ -92,13 +92,35 @@ export class CanvasRenderer implements Renderer {
       const img = this.assets.get(command.texture);
 
       if (img) {
-        this.ctx.drawImage(
-          img,
-          -half(command.width),
-          -half(command.height),
-          command.width,
-          command.height
-        );
+        if (command.repeat) {
+          const pattern = this.ctx.createPattern(img, 'repeat');
+
+          if (pattern) {
+            const scaleX = command.repeat.width / img.width;
+            const scaleY = command.repeat.height / img.height;
+            const offsetX = -half(command.repeat.width);
+            const offsetY = -half(command.repeat.height);
+
+            // TODO: replace translate with anchor point
+            pattern.setTransform(new DOMMatrix().translate(offsetX, offsetY).scale(scaleX, scaleY));
+
+            this.ctx.fillStyle = pattern;
+            this.ctx.fillRect(
+              -half(command.width),
+              -half(command.height),
+              command.width,
+              command.height
+            );
+          }
+        } else {
+          this.ctx.drawImage(
+            img,
+            -half(command.width),
+            -half(command.height),
+            command.width,
+            command.height
+          );
+        }
       } else {
         this.ctx.fillStyle = command.color;
         this.ctx.fillRect(

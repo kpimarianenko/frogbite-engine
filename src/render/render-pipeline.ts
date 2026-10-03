@@ -21,6 +21,7 @@ export class RenderPipeline {
         height: sprite.height,
         color: sprite.color,
         texture: sprite.texture,
+        repeat: sprite.repeat,
         animation: sprite.animation,
       });
     }

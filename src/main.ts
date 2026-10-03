@@ -10,25 +10,28 @@ import { FrogbitePhysicsEngine, ShapeType } from './physics';
 
 class MovementSystem implements System {
   readonly id: string = crypto.randomUUID();
+  private entity: Entity;
   private v = 5;
 
-  update({ scene, input, dt }: SystemContext): void {
-    for (const entity of scene.entities) {
-      if (input.isDown('KeyW')) {
-        entity.translate(0, -this.v * dt, 0);
-      }
+  constructor(entity: Entity) {
+    this.entity = entity;
+  }
 
-      if (input.isDown('KeyS')) {
-        entity.translate(0, this.v * dt, 0);
-      }
+  update({ input, dt }: SystemContext): void {
+    if (input.isDown('KeyW')) {
+      this.entity.translate(0, -this.v * dt, 0);
+    }
 
-      if (input.isDown('KeyA')) {
-        entity.translate(-this.v * dt, 0, 0);
-      }
+    if (input.isDown('KeyS')) {
+      this.entity.translate(0, this.v * dt, 0);
+    }
 
-      if (input.isDown('KeyD')) {
-        entity.translate(this.v * dt, 0, 0);
-      }
+    if (input.isDown('KeyA')) {
+      this.entity.translate(-this.v * dt, 0, 0);
+    }
+
+    if (input.isDown('KeyD')) {
+      this.entity.translate(this.v * dt, 0, 0);
     }
   }
 }
@@ -50,10 +53,20 @@ const main = async () => {
   const scene = new Scene();
   const camera = new OrthographicCamera();
   const lightBox = new Entity();
-  const heavyBox = new Entity();
+  const player = new Entity();
   const floor = new Entity();
 
-  floor.addComponent(new SpriteComponent({ width: 20, height: 1, texture: 'grass' }));
+  floor.addComponent(
+    new SpriteComponent({
+      width: 20,
+      height: 1,
+      texture: 'grass',
+      repeat: {
+        width: 1,
+        height: 1,
+      },
+    })
+  );
   floor.addComponent(
     new RigidBodyComponent({
       isStatic: true,
@@ -83,7 +96,7 @@ const main = async () => {
   );
   lightBox.setPosition(-1, -1, 0);
 
-  heavyBox.addComponent(
+  player.addComponent(
     new SpriteComponent({
       width: 1,
       height: 1,
@@ -103,7 +116,7 @@ const main = async () => {
       },
     })
   );
-  heavyBox.addComponent(
+  player.addComponent(
     new RigidBodyComponent({
       mass: 2,
       friction: 0.1,
@@ -116,7 +129,7 @@ const main = async () => {
       },
     })
   );
-  heavyBox.setPosition(1, -1, 0);
+  player.setPosition(1, -1, 0);
 
   const hat = new Entity();
 
@@ -127,14 +140,14 @@ const main = async () => {
   const impulse = 3;
 
   lightBox.getComponent(RigidBodyComponent)?.applyImpulse(-impulse, 0, 0);
-  heavyBox.getComponent(RigidBodyComponent)?.applyImpulse(impulse, 0, 0);
+  player.getComponent(RigidBodyComponent)?.applyImpulse(impulse, 0, 0);
 
   scene.addChild(lightBox);
-  scene.addChild(heavyBox);
+  scene.addChild(player);
   scene.addChild(floor);
 
   scene.addCamera(camera);
-  scene.addSystem(new MovementSystem());
+  scene.addSystem(new MovementSystem(player));
 
   const physics = new FrogbitePhysicsEngine();
   const engine = new FrogbiteEngine(renderer, input, physics);

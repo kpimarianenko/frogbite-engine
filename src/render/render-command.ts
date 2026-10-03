@@ -16,6 +16,10 @@ export type SpriteRenderCommand = BaseRenderCommand & {
   height: number;
   color: string;
   texture: string | null;
+  repeat: {
+    width: number;
+    height: number;
+  } | null;
   animation: {
     frame: number;
     frameWidth: number;

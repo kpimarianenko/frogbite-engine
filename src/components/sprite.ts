@@ -12,6 +12,10 @@ export type SpriteComponentOptions = {
   height?: number;
   color?: string;
   texture?: string;
+  repeat?: {
+    width: number;
+    height: number;
+  };
   animation?: {
     sequences: Record<string, SpriteAnimation>;
     frameWidth: number;
@@ -26,16 +30,28 @@ export class SpriteComponent extends Component {
   height: number;
   color: string;
   texture: string | null;
+  repeat: null | {
+    width: number;
+    height: number;
+  };
   animation: SpriteAnimationConfig | null;
 
   constructor(options: SpriteComponentOptions = {}) {
     super();
-    const { width = 50, height = 50, color = '#444', texture = null, animation = null } = options;
+    const {
+      width = 50,
+      height = 50,
+      color = '#444',
+      texture = null,
+      repeat = null,
+      animation = null,
+    } = options;
 
     this.width = width;
     this.height = height;
     this.color = color;
     this.texture = texture;
+    this.repeat = repeat;
     this.animation = animation && {
       sequences: animation.sequences,
       frameWidth: animation.frameWidth,
