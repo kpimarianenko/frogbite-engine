@@ -1,0 +1,50 @@
+{
+  "position": {
+    "x": 1,
+    "y": -1,
+    "z": 0
+  },
+  "sprite": {
+    "width": 1,
+    "height": 1,
+    "texture": "walk",
+    "animation": {
+      "current": "walk",
+      "frameWidth": 32,
+      "frameHeight": 32,
+      "sequences": {
+        "walk": {
+          "texture": "walk",
+          "frameCount": 6,
+          "fps": 12,
+          "loop": true
+        }
+      }
+    }
+  },
+  "rigidBody": {
+    "mass": 2,
+    "friction": 0.1,
+    "restitution": 0.5,
+    "shape": {
+      "type": "box",
+      "width": 1,
+      "height": 1,
+      "depth": 0
+    }
+  },
+  "children": [
+    {
+      "position": {
+        "x": 0,
+        "y": -1,
+        "z": 0
+      },
+      "sprite": {
+        "width": 1,
+        "height": 1,
+        "texture": "hat"
+      }
+    }
+  ]
+}

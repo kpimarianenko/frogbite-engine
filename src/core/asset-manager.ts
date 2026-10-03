@@ -1,46 +1,143 @@
-export class AssetManager {
-  private textures = new Map<string, HTMLImageElement>();
-  private pending = new Map<string, Promise<HTMLImageElement>>();
+import type { EntityPrefab } from '@/scene/prefab';
 
-  async load(key: string, url: string): Promise<HTMLImageElement> {
-    if (this.textures.has(key)) {
-      return this.textures.get(key)!;
+interface AssetManifest {
+  textures?: Record<string, string>;
+  prefabs?: Record<string, string>;
+}
+
+class AssetStore<T> {
+  private assets = new Map<string, T>();
+  private pending = new Map<string, Promise<T>>();
+
+  async load(key: string, loader: () => Promise<T>): Promise<T> {
+    const asset = this.assets.get(key);
+
+    if (asset) {
+      return asset;
     }
 
-    if (this.pending.has(key)) {
-      return this.pending.get(key)!;
+    const pending = this.pending.get(key);
+
+    if (pending) {
+      return pending;
     }
 
-    const promise = new Promise<HTMLImageElement>((resolve, reject) => {
-      const img = new Image();
-
-      img.onload = () => {
-        this.textures.set(key, img);
+    const promise = loader()
+      .then(asset => {
+        this.assets.set(key, asset);
         this.pending.delete(key);
-        resolve(img);
-      };
-      img.onerror = () => reject(new Error(`Failed to load texture: ${url}`));
-      img.src = url;
-    });
+        return asset;
+      })
+      .catch(error => {
+        this.pending.delete(key);
+        throw error;
+      });
 
     this.pending.set(key, promise);
+
     return promise;
   }
 
-  async loadAll(assets: Record<string, string>): Promise<void> {
-    await Promise.all(Object.entries(assets).map(([key, url]) => this.load(key, url)));
-  }
-
-  get(key: string): HTMLImageElement | null {
-    return this.textures.get(key) ?? null;
+  get(key: string): T | null {
+    return this.assets.get(key) ?? null;
   }
 
   has(key: string): boolean {
-    return this.textures.has(key);
+    return this.assets.has(key);
   }
 
   unload(key: string): void {
-    this.textures.delete(key);
+    this.assets.delete(key);
     this.pending.delete(key);
+  }
+}
+
+export class AssetManager {
+  private textures = new AssetStore<HTMLImageElement>();
+  private prefabs = new AssetStore<EntityPrefab>();
+
+  private manifestPath: string;
+  private manifest: AssetManifest | null;
+
+  constructor(manifestPath: string) {
+    this.manifestPath = manifestPath;
+    this.manifest = null;
+  }
+
+  async load() {
+    await this.loadManifest();
+
+    await Promise.all([this.loadTextures(), this.loadPrefabs()]);
+  }
+
+  async loadManifest() {
+    const response = await fetch(this.manifestPath);
+
+    if (!response.ok) {
+      throw new Error(`Failed to load asset manifest: ${this.manifestPath}`);
+    }
+
+    this.manifest = (await response.json()) as AssetManifest;
+  }
+
+  async loadTextures() {
+    await Promise.all(
+      Object.entries(this.manifest?.textures ?? {}).map(([key, url]) => this.loadTexture(key, url))
+    );
+  }
+
+  async loadPrefabs() {
+    await Promise.all(
+      Object.entries(this.manifest?.prefabs ?? {}).map(([key, url]) => this.loadPrefab(key, url))
+    );
+  }
+
+  async loadTexture(key: string, path: string) {
+    return await this.textures.load(
+      key,
+      () =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+
+          img.onload = () => resolve(img);
+          img.onerror = () => {
+            reject(new Error(`Failed to load texture: ${path}`));
+          };
+
+          img.src = path;
+        })
+    );
+  }
+
+  async loadPrefab(key: string, path: string) {
+    return this.prefabs.load(key, async () => {
+      const response = await fetch(path);
+
+      if (!response.ok) {
+        throw new Error(`Failed to load prefab: ${path}`);
+      }
+
+      return response.json() as Promise<EntityPrefab>;
+    });
+  }
+
+  getTexture(key: string) {
+    const texture = this.textures.get(key);
+
+    if (!texture) {
+      throw new Error(`Texture not found: ${key}`);
+    }
+
+    return texture;
+  }
+
+  getPrefab(key: string) {
+    const prefab = this.prefabs.get(key);
+
+    if (!prefab) {
+      throw new Error(`Prefab not found: ${key}`);
+    }
+
+    return prefab;
   }
 }

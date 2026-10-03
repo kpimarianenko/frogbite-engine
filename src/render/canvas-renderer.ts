@@ -72,7 +72,7 @@ export class CanvasRenderer implements Renderer {
     this.ctx.setTransform(m[0], m[1], m[4], m[5], m[12] + cx, m[13] + cy);
 
     if (command.animation) {
-      const img = this.assets.get('walk')!;
+      const img = this.assets.getTexture('walk');
       const columns = Math.floor(img.width / command.animation.frameWidth);
       const sourceX = (command.animation.frame % columns) * command.animation.frameWidth;
       const sourceY = Math.floor(command.animation.frame / columns) * command.animation.frameHeight;
@@ -89,7 +89,7 @@ export class CanvasRenderer implements Renderer {
         command.height
       );
     } else if (command.texture) {
-      const img = this.assets.get(command.texture);
+      const img = this.assets.getTexture(command.texture);
 
       if (img) {
         if (command.repeat) {

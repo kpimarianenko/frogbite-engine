@@ -1,0 +1,14 @@
+{
+  "textures": {
+    "player": "/assets/textures/player.png",
+    "hat": "/assets/textures/hat.png",
+    "box": "/assets/textures/box.png",
+    "grass": "/assets/textures/grass.png",
+    "walk": "/assets/textures/walk.png"
+  },
+  "prefabs": {
+    "box": "/assets/prefabs/box.json",
+    "floor": "/assets/prefabs/floor.json",
+    "player": "/assets/prefabs/player.json"
+  }
+}

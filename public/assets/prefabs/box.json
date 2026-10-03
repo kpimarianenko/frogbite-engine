@@ -1,0 +1,22 @@
+{
+  "position": {
+    "x": -1,
+    "y": -1,
+    "z": 0
+  },
+  "sprite": {
+    "width": 1,
+    "height": 1,
+    "texture": "box"
+  },
+  "rigidBody": {
+    "mass": 1,
+    "friction": 0.5,
+    "shape": {
+      "type": "box",
+      "width": 1,
+      "height": 1,
+      "depth": 0
+    }
+  }
+}

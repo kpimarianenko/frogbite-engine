@@ -2,6 +2,8 @@ import type { Component, ComponentConstructor } from '@/components';
 import type { System } from '@/core/system';
 import type { Camera } from './camera';
 import { Entity } from './entity';
+import { EntityFactory } from './entity-factory';
+import type { EntityPrefab } from './prefab';
 
 export class Scene {
   entities: Entity[] = [];
@@ -9,6 +11,13 @@ export class Scene {
   systems: System[] = [];
 
   private pendingRemovals = new Set<Entity>();
+
+  instantiate(prefab: EntityPrefab) {
+    const entity = EntityFactory.create(prefab);
+
+    this.addChild(entity);
+    return entity;
+  }
 
   addChild(entity: Entity) {
     // TODO: Should check if entity already belongs to this or another scene

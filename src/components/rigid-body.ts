@@ -2,7 +2,7 @@ import type { Vector3D } from '@/math';
 import type { PhysicsShape } from '@/physics';
 import { Component } from './component';
 
-export type RigidBodyOptions = {
+export type RigidBodyComponentOptions = {
   shape: PhysicsShape;
   mass?: number;
   restitution?: number;
@@ -26,7 +26,7 @@ export class RigidBodyComponent extends Component {
 
   // TODO: Should add inverse mass getter?
 
-  constructor(options: RigidBodyOptions) {
+  constructor(options: RigidBodyComponentOptions) {
     super();
     const {
       shape,
