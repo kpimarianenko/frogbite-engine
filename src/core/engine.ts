@@ -4,17 +4,21 @@ import type { PhysicsEngine } from '@/physics';
 import { RenderPipeline } from '@/render';
 import type { Renderer } from '@/render';
 import type { Scene } from '@/scene';
+import type { AssetManager } from './assets';
+import { AudioManager } from './audio';
 import { EventBus } from './events';
-import type { InputManager } from './input';
+import { InputManager } from './input';
 import { Time } from './time';
 
 export class FrogbiteEngine {
   time = new Time();
   events = new EventBus();
+  input = new InputManager();
+  audio = new AudioManager();
   renderPipeline = new RenderPipeline();
   renderer: Renderer;
   scenes: Scene[] = [];
-  input: InputManager;
+  assets: AssetManager;
   physics: PhysicsEngine | null;
 
   private lastTime = 0;
@@ -24,9 +28,9 @@ export class FrogbiteEngine {
   private readonly TICK_TIME_STEP = 1 / this.TICK_RATE;
   private readonly MAX_DT = 0.1;
 
-  constructor(renderer: Renderer, input: InputManager, physics: PhysicsEngine | null = null) {
+  constructor(renderer: Renderer, assets: AssetManager, physics: PhysicsEngine | null = null) {
     this.renderer = renderer;
-    this.input = input;
+    this.assets = assets;
     this.physics = physics;
   }
 
@@ -43,6 +47,8 @@ export class FrogbiteEngine {
         system.update({
           scene,
           input: this.input,
+          assets: this.assets,
+          audio: this.audio,
           dt,
         });
       }
@@ -61,6 +67,8 @@ export class FrogbiteEngine {
         system.tick?.({
           scene,
           input: this.input,
+          assets: this.assets,
+          audio: this.audio,
           dt,
         });
       }

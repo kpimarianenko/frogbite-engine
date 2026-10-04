@@ -1,23 +1,24 @@
 import './reset.css';
 import { RigidBodyComponent } from '@/components';
+import { AssetManager } from '@/core/assets';
+import type { AudioPlayback } from '@/core/audio';
 import { FrogbiteEngine } from '@/core/engine';
-import { InputManager } from '@/core/input';
 import type { System, SystemContext } from '@/core/system';
 import { CanvasRenderer, handleRendererResize } from '@/render';
 import { Entity, OrthographicCamera, Scene } from '@/scene';
-import { AssetManager } from './core/asset-manager';
 import { FrogbitePhysicsEngine } from './physics';
 
 class MovementSystem implements System {
   readonly id: string = crypto.randomUUID();
   private entity: Entity;
   private v = 5;
+  private playback: AudioPlayback | null = null;
 
   constructor(entity: Entity) {
     this.entity = entity;
   }
 
-  update({ input, dt }: SystemContext): void {
+  update({ assets, audio, input, dt }: SystemContext): void {
     if (input.isDown('KeyW')) {
       this.entity.translate(0, -this.v * dt, 0);
     }
@@ -33,12 +34,22 @@ class MovementSystem implements System {
     if (input.isDown('KeyD')) {
       this.entity.translate(this.v * dt, 0, 0);
     }
+
+    if (input.wasReleased('KeyF')) {
+      const buffer = assets.getAudio('hit');
+
+      if (this.playback) {
+        this.playback.stop();
+        this.playback = null;
+      } else {
+        this.playback = audio.play(buffer, { loop: true });
+      }
+    }
   }
 }
 
 const main = async () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-  const input = new InputManager();
   const assets = new AssetManager('/assets/manifest.json');
   const renderer = new CanvasRenderer(canvas, assets);
 
@@ -64,7 +75,7 @@ const main = async () => {
   scene.addSystem(new MovementSystem(player));
 
   const physics = new FrogbitePhysicsEngine();
-  const engine = new FrogbiteEngine(renderer, input, physics);
+  const engine = new FrogbiteEngine(renderer, assets, physics);
 
   handleRendererResize(renderer, () => ({
     width: window.innerWidth,

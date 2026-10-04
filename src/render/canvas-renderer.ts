@@ -1,4 +1,4 @@
-import type { AssetManager } from '@/core/asset-manager';
+import type { AssetManager } from '@/core/assets';
 import { half } from '@/math';
 import type { Viewport } from '@/scene';
 import type { RenderCommand, SpriteRenderCommand } from './render-command';
