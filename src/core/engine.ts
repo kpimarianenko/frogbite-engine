@@ -24,6 +24,8 @@ export class FrogbiteEngine {
 
   private lastTime = 0;
   private tickAccumulator = 0;
+  private running = false;
+  private animationFrame: number | null = null;
 
   private readonly TICK_RATE = 60;
   private readonly TICK_TIME_STEP = 1 / this.TICK_RATE;
@@ -35,11 +37,31 @@ export class FrogbiteEngine {
     this.physics = physics;
   }
 
+  get isRunning() {
+    return this.running;
+  }
+
   start() {
-    requestAnimationFrame(t => {
-      this.lastTime = t;
-      requestAnimationFrame(this.loop);
-    });
+    if (this.running) {
+      return;
+    }
+
+    this.running = true;
+    this.lastTime = performance.now();
+    this.animationFrame = requestAnimationFrame(this.loop);
+  }
+
+  stop() {
+    if (!this.running) {
+      return;
+    }
+
+    this.running = false;
+
+    if (this.animationFrame !== null) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = null;
+    }
   }
 
   update(dt: number) {
@@ -89,6 +111,10 @@ export class FrogbiteEngine {
   }
 
   private loop = (t: number) => {
+    if (!this.running) {
+      return;
+    }
+
     const dt = Math.min((t - this.lastTime) / MILLIS_IN_SECOND, this.MAX_DT);
 
     this.lastTime = t;
@@ -111,6 +137,6 @@ export class FrogbiteEngine {
     }
 
     this.render();
-    requestAnimationFrame(this.loop);
+    this.animationFrame = requestAnimationFrame(this.loop);
   };
 }
