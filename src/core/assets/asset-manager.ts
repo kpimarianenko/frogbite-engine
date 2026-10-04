@@ -1,4 +1,4 @@
-import type { EntityPrefab } from '@/scene/prefab';
+import type { EntityPrefab } from '@/scene/entity';
 import { AssetStore } from './asset-store';
 
 interface AssetManifest {

@@ -1,26 +1,7 @@
 import { half, Matrix4x4, type Vector3D } from '@/math';
-
-export type Viewport = {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-  normalized: boolean;
-};
-
-export enum CameraType {
-  Orthographic = 'orthographic',
-  Perspective = 'perspective',
-}
-
-interface BaseCamera {
-  readonly id: string;
-  viewport: Viewport;
-  getPosition(): Readonly<Vector3D>;
-  setPosition(x: number, y: number, z: number): void;
-  getProjectionMatrix(): Float32Array;
-  getViewMatrix(): Float32Array;
-}
+import type { BaseCamera } from './base-camera';
+import { CameraType } from './camera-type';
+import type { Viewport } from './viewport';
 
 export class OrthographicCamera implements BaseCamera {
   readonly id: string = crypto.randomUUID();
@@ -91,30 +72,3 @@ export class OrthographicCamera implements BaseCamera {
     return this.projectionMatrix;
   }
 }
-
-// TODO: Implement perspective camera
-export class PerspectiveCamera implements BaseCamera {
-  readonly id: string = crypto.randomUUID();
-  viewport: Viewport;
-  readonly type = CameraType.Perspective as const;
-
-  constructor(viewport: Viewport) {
-    this.viewport = viewport;
-  }
-
-  getPosition() {
-    return { x: 0, y: 0, z: 0 };
-  }
-
-  setPosition() {}
-
-  getProjectionMatrix() {
-    return new Float32Array(0);
-  }
-
-  getViewMatrix() {
-    return new Float32Array(0);
-  }
-}
-
-export type Camera = OrthographicCamera | PerspectiveCamera;

@@ -1,9 +1,7 @@
 import type { Component, ComponentConstructor } from '@/components';
 import type { System } from '@/core/system';
 import type { Camera } from './camera';
-import { Entity } from './entity';
-import { EntityFactory } from './entity-factory';
-import type { EntityPrefab } from './prefab';
+import { Entity, EntityFactory, type EntityPrefab } from './entity';
 
 export class Scene {
   entities: Entity[] = [];

@@ -1,6 +1,6 @@
 import { RigidBodyComponent, SpriteComponent } from '@/components';
 import { Entity } from './entity';
-import type { EntityPrefab } from './prefab';
+import type { EntityPrefab } from './entity-prefab';
 
 export class EntityFactory {
   static create(prefab: EntityPrefab): Entity {
