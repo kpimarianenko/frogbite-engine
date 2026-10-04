@@ -4,10 +4,3 @@ export type SpriteAnimation = {
   fps: number;
   loop: boolean;
 };
-
-export type SpriteAnimationState = {
-  current: string | null;
-  frame: number;
-  elapsed: number;
-  playing: boolean;
-};

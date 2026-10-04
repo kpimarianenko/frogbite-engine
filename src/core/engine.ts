@@ -1,9 +1,9 @@
-import { RigidBodyComponent, SpriteComponent } from '@/components';
 import { MILLIS_IN_SECOND } from '@/constants/time';
 import type { PhysicsEngine } from '@/physics';
 import { RenderPipeline } from '@/render';
 import type { Renderer } from '@/render';
 import type { Scene } from '@/scene';
+import { AnimationManager } from './animation';
 import type { AssetManager } from './assets';
 import { AudioManager } from './audio';
 import { EventBus } from './events';
@@ -15,6 +15,7 @@ export class FrogbiteEngine {
   events = new EventBus();
   input = new InputManager();
   audio = new AudioManager();
+  animations = new AnimationManager();
   renderPipeline = new RenderPipeline();
   renderer: Renderer;
   scenes: Scene[] = [];
@@ -59,9 +60,7 @@ export class FrogbiteEngine {
 
   tick(dt: number) {
     for (const scene of this.scenes) {
-      const bodies = scene.query(RigidBodyComponent);
-
-      this.physics?.step(bodies, dt);
+      this.physics?.step(scene, dt);
 
       for (const system of scene.systems) {
         system.tick?.({
@@ -102,7 +101,10 @@ export class FrogbiteEngine {
     }
 
     this.update(dt);
-    this.updateAnimations(dt);
+
+    for (const scene of this.scenes) {
+      this.animations.update(scene, dt);
+    }
 
     for (const scene of this.scenes) {
       scene.flushRemovals();
@@ -111,40 +113,4 @@ export class FrogbiteEngine {
     this.render();
     requestAnimationFrame(this.loop);
   };
-
-  private updateAnimations(dt: number) {
-    for (const scene of this.scenes) {
-      for (const entity of scene.query(SpriteComponent)) {
-        const sprite = entity.getComponent(SpriteComponent)!;
-
-        if (!sprite.animation || !sprite.currentAnimation) {
-          continue;
-        }
-
-        const animation = sprite.currentAnimation;
-
-        if (!animation || !animation.frameCount) {
-          continue;
-        }
-
-        sprite.animation.elapsed += dt;
-        const frameDuration = 1 / animation.fps;
-
-        while (sprite.animation.elapsed >= frameDuration) {
-          sprite.animation.elapsed -= frameDuration;
-          sprite.animation.frame++;
-
-          if (sprite.animation.frame >= animation.frameCount) {
-            if (animation.loop) {
-              sprite.animation.frame = 0;
-            } else {
-              sprite.animation.frame = animation.frameCount - 1;
-              sprite.animation.playing = false;
-              break;
-            }
-          }
-        }
-      }
-    }
-  }
 }

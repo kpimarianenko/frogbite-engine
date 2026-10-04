@@ -1,6 +1,6 @@
 import { RigidBodyComponent } from '@/components';
 import type { Vector3D } from '@/math';
-import type { Entity } from '@/scene';
+import type { Entity, Scene } from '@/scene';
 import { aabbIntersects, getAABB } from './aabb';
 import { PhysicsEngine } from './base-physics-engine';
 import { ShapeType } from './shapes';
@@ -26,7 +26,9 @@ export class FrogbitePhysicsEngine extends PhysicsEngine {
     this.gravity = { x, y, z };
   }
 
-  step(bodies: Entity[], dt: number) {
+  step(scene: Scene, dt: number) {
+    const bodies = scene.query(RigidBodyComponent);
+
     this.integrate(bodies, dt);
     this.updateBodiesWorldTransforms(bodies);
     this.detectCollisions(bodies);
